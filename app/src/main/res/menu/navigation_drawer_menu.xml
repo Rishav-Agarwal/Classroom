@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:title="@string/nav_item_title_classes">
+        <menu>
+            <group
+                android:id="@+id/nav_grp_classes"
+                android:checkableBehavior="single" />
+        </menu>
+    </item>
+
+    <item android:title="@string/nav_other">
+        <menu>
+            <group android:checkableBehavior="single">
+                <item
+                    android:icon="@drawable/about_us"
+                    android:title="@string/nav_about_us" />
+
+                <item
+                    android:icon="@drawable/privacy_policy"
+                    android:title="@string/nav_privacy_policy" />
+            </group>
+        </menu>
+    </item>
+
+</menu>

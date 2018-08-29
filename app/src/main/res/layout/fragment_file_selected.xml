@@ -1,0 +1,43 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/post_send_back"
+    android:padding="4dp"
+    tools:context="in.edu.jaduniv.classroom.fragment.FileSelectedFragment">
+
+    <LinearLayout
+        android:id="@+id/ll_file"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/iv_remove_file"
+        android:layout_centerInParent="true"
+        android:background="#424242"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:src="@drawable/file" />
+
+        <TextView
+            android:id="@+id/tv_file_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:gravity="center"
+            android:padding="4dp"
+            tools:text="app-release.apk" />
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/iv_remove_file"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:contentDescription="@string/remove_file"
+        android:foreground="?attr/selectableItemBackground"
+        android:src="@android:drawable/ic_menu_close_clear_cancel" />
+</RelativeLayout>

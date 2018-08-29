@@ -1,0 +1,50 @@
+<resources>
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>
+        <item name="android:colorBackground">@color/colorPrimary</item>
+        <item name="android:textColor">#E0E0E0</item>
+        <item name="android:textColorSecondary">@color/colorAccent</item>
+    </style>
+
+    <style name="FirebaseTheme" parent="FirebaseUI">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:windowBackground">@color/colorPrimary</item>
+
+        <item name="android:textColorPrimary">@color/colorAccent</item>
+        <item name="android:textColorHint">@color/colorAccent</item>
+
+        <item name="android:dialogTheme">@style/FirebaseDialogTheme</item>
+
+        <item name="colorControlNormal">@color/colorAccent</item>
+        <item name="colorControlActivated">@color/colorAccent</item>
+        <item name="colorControlHighlight">@color/colorAccent</item>
+    </style>
+
+    <style name="FirebaseDialogTheme">
+        <item name="android:background">#222222</item>
+    </style>
+
+    <style name="NavigationTheme" parent="Theme.AppCompat" />
+
+    <style name="DrawerArrowStyle" parent="Widget.AppCompat.DrawerArrowToggle">
+        <item name="color">@color/colorAccent</item>
+    </style>
+
+    <style name="EditTextStyle">
+        <item name="colorControlNormal">#ffffff</item>
+        <item name="android:textColorPrimary">#ffffff</item>
+        <item name="android:textColorHint">#ffffff</item>
+    </style>
+
+    <style name="ButtonStyle">
+        <item name="android:textColor">#EEEEEE</item>
+        <item name="colorButtonNormal">#FF9800</item>
+    </style>
+</resources>

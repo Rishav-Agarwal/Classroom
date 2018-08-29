@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="in.edu.jaduniv.classroom">
+
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+    <application
+        android:allowBackup="true"
+        android:fullBackupContent="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme"
+        tools:replace="android:fullBackupContent">
+
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="${applicationId}.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/provider_paths"/>
+        </provider>
+
+        <activity
+            android:name=".activity.SplashScreenActivity"
+            android:launchMode="singleTop">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".activity.MainActivity"
+            android:launchMode="singleTop">
+            <intent-filter>
+                <action android:name="in.edu.jaduniv.classroom.MAINACTIVITY" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".activity.LoginInfoActivity"
+            android:launchMode="singleTop">
+            <intent-filter>
+                <action android:name="in.edu.jaduniv.classroom.LOGININFOACTIVITY" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".activity.EventAndNotice"
+            android:launchMode="singleTop"
+            android:parentActivityName=".activity.MainActivity"
+            android:windowSoftInputMode="stateAlwaysHidden" />
+
+        <service
+            android:name=".other.ClassroomMessagingService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+
+        <service
+            android:name=".other.FileUploadService"
+            android:exported="false" />
+
+        <activity
+            android:name=".activity.ClassInfo"
+            android:launchMode="singleTop"
+            android:parentActivityName=".activity.MainActivity" />
+
+        <activity
+            android:name=".activity.PostRequests"
+            android:launchMode="singleTop"
+            android:parentActivityName=".activity.EventAndNotice" />
+
+        <activity
+            android:name=".activity.Syllabus"
+            android:launchMode="singleTop"
+            android:parentActivityName=".activity.MainActivity" />
+    </application>
+
+</manifest>

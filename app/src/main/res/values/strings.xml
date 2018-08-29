@@ -1,0 +1,40 @@
+<resources>
+    <string name="app_name">Classroom</string>
+
+    <!-- Navigation drawer strings resource -->
+    <string name="nav_other">Other</string>
+    <string name="nav_about_us">About Us</string>
+    <string name="nav_privacy_policy">Privacy Policy</string>
+    <string name="nav_head_back_img">Navigation drawer header\'s background image</string>
+    <string name="nav_profile_pic">Navigation drawer profile picture</string>
+    <string name="nav_item_title_classes">Classes</string>
+    <string name="open_drawer">Open drawer</string>
+    <string name="close_drawer">Close drawer</string>
+
+    <!-- Overflow menu string resources -->
+    <string name="menu_new_class">New class</string>
+
+    <!-- Login strings -->
+    <string name="app_icon">App icon</string>
+    <string name="name">Name</string>
+    <string name="email">Email</string>
+
+    <!-- Default fragment strings -->
+    <string name="welcome_to_classroom">Welcome to Classroom</string>
+    <string name="join_or_create_text">Join or Create a class by clicking the \'+\' button</string>
+
+    <!-- All other/ Common resources -->
+    <string name="next">Next</string>
+    <string name="send">Send</string>
+    <string name="accept_join_request">Accept join request</string>
+    <string name="reject_join_request">Reject join request</string>
+    <string name="post_requests">Post requests</string>
+    <string name="attach_file">Attach file</string>
+    <string name="syllabus">Syllabus</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="remove_file">Remove file</string>
+    <string name="re_download">Download</string>
+    <string name="contains_a_file">Contains a file</string>
+
+</resources>

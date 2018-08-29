@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="in.edu.jaduniv.classroom.activity.Syllabus">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar_syllabus"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/colorPrimary">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:text="@string/syllabus"
+            android:textColor="@color/colorAccent"
+            android:textSize="20sp" />
+    </android.support.v7.widget.Toolbar>
+
+    <GridView
+        android:id="@+id/grid_view_syllabus"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/toolbar_syllabus"
+        android:gravity="center"
+        android:horizontalSpacing="8dp"
+        android:numColumns="2"
+        android:padding="10dp"
+        android:stretchMode="columnWidth"
+        android:verticalSpacing="8dp" />
+
+</RelativeLayout>

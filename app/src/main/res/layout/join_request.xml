@@ -54,17 +54,17 @@
             app:layout_constraintTop_toBottomOf="@id/tv_phone_no">
 
             <ImageView
+                android:id="@+id/iv_join_request_accept"
                 android:layout_width="28dp"
                 android:layout_height="28dp"
                 android:layout_marginEnd="8dp"
-                android:layout_marginRight="8dp"
                 android:contentDescription="@string/accept_join_request"
                 android:src="@drawable/accept" />
 
             <ImageView
+                android:id="@+id/iv_join_request_reject"
                 android:layout_width="28dp"
                 android:layout_height="28dp"
-                android:layout_marginLeft="8dp"
                 android:layout_marginStart="8dp"
                 android:contentDescription="@string/reject_join_request"
                 android:src="@drawable/reject" />

@@ -4,7 +4,8 @@ public class JoinRequest {
     private String name;
     private String phone;
 
-    public JoinRequest() {}
+    public JoinRequest() {
+    }
 
     public JoinRequest(String name, String phone) {
         this.name = name;

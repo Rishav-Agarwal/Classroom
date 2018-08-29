@@ -2,10 +2,8 @@ package in.edu.jaduniv.classroom.adapters;
 
 import android.annotation.SuppressLint;
 import android.app.DownloadManager;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.database.Cursor;
 import android.net.Uri;
 import android.support.annotation.NonNull;
@@ -25,7 +23,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.cloudinary.Cloudinary;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DatabaseError;
@@ -33,11 +30,11 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ServerValue;
 
 import java.io.File;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
@@ -68,26 +65,9 @@ public class PostRequestAdapter extends RecyclerView.Adapter<PostRequestAdapter.
         }
     }
 
-    static class PostRequestViewHolder extends RecyclerView.ViewHolder {
-
-        TextView tvSenderName, tvTitle, tvDescription, tvTime;
-        ImageView ivAccept, ivReject;
-        LinearLayout llFile;
-
-        PostRequestViewHolder(View itemView) {
-            super(itemView);
-            tvSenderName = (TextView) itemView.findViewById(R.id.tv_post_request_sender_name);
-            tvTitle = (TextView) itemView.findViewById(R.id.tv_post_request_title);
-            tvDescription = (TextView) itemView.findViewById(R.id.tv_post_request_description);
-            tvTime = (TextView) itemView.findViewById(R.id.tv_post_request_time);
-            ivAccept = (ImageView) itemView.findViewById(R.id.iv_post_request_accept);
-            ivReject = (ImageView) itemView.findViewById(R.id.iv_post_request_reject);
-            llFile = (LinearLayout) itemView.findViewById(R.id.ll_file);
-        }
-    }
-
+    @NonNull
     @Override
-    public PostRequestAdapter.PostRequestViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public PostRequestAdapter.PostRequestViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.post_request, parent, false);
         return new PostRequestViewHolder(view);
     }
@@ -102,7 +82,7 @@ public class PostRequestAdapter extends RecyclerView.Adapter<PostRequestAdapter.
     }
 
     @Override
-    public void onBindViewHolder(final PostRequestViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final PostRequestViewHolder holder, int position) {
         final Post request = postRequests.get(holder.getAdapterPosition());
         holder.tvSenderName.setText(request.getPostedByName());
         holder.tvTitle.setText(request.getTitle());
@@ -147,7 +127,7 @@ public class PostRequestAdapter extends RecyclerView.Adapter<PostRequestAdapter.
             public void onClick(View view) {
                 FirebaseUtils.getDatabaseReference().child("classes").child(classCode).child("post_req").child(postRequestKeys.get(holder.getAdapterPosition())).removeValue(new DatabaseReference.CompletionListener() {
                     @Override
-                    public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                    public void onComplete(DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
                         Toast.makeText(context, "Post request deleted!", Toast.LENGTH_SHORT).show();
                         int index = holder.getAdapterPosition();
                         postRequests.remove(index);
@@ -159,13 +139,13 @@ public class PostRequestAdapter extends RecyclerView.Adapter<PostRequestAdapter.
                             @Override
                             public void run() {
                                 try {
-                                    Map<String, String> config = CloudinaryUtils.getCloudinaryConfig();
+                                    Map<String, String> config = new HashMap<>(CloudinaryUtils.getCloudinaryConfig());
                                     config.remove("resource_type");
                                     config.put("resource_type", request.getResourceType());
                                     Log.d("Resource type", config.get("resource_type"));
                                     Map destroy = CloudinaryUtils.getInstance().uploader().destroy(request.getPublicId(), config);
                                     Log.d("Destroy", destroy + "");
-                                } catch (IOException e) {
+                                } catch (Throwable e) {
                                     e.printStackTrace();
                                 }
                             }
@@ -374,5 +354,23 @@ public class PostRequestAdapter extends RecyclerView.Adapter<PostRequestAdapter.
         void onRecyclerViewEmptied();
 
         void onRecyclerViewPopulated();
+    }
+
+    static class PostRequestViewHolder extends RecyclerView.ViewHolder {
+
+        TextView tvSenderName, tvTitle, tvDescription, tvTime;
+        ImageView ivAccept, ivReject;
+        LinearLayout llFile;
+
+        PostRequestViewHolder(View itemView) {
+            super(itemView);
+            tvSenderName = itemView.findViewById(R.id.tv_post_request_sender_name);
+            tvTitle = itemView.findViewById(R.id.tv_post_request_title);
+            tvDescription = itemView.findViewById(R.id.tv_post_request_description);
+            tvTime = itemView.findViewById(R.id.tv_post_request_time);
+            ivAccept = itemView.findViewById(R.id.iv_post_request_accept);
+            ivReject = itemView.findViewById(R.id.iv_post_request_reject);
+            llFile = itemView.findViewById(R.id.ll_file);
+        }
     }
 }

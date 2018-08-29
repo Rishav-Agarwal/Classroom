@@ -1,8 +1,10 @@
 package in.edu.jaduniv.classroom.activity;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -17,11 +19,11 @@ import com.google.firebase.database.DatabaseError;
 import java.util.ArrayList;
 
 import in.edu.jaduniv.classroom.R;
+import in.edu.jaduniv.classroom.adapters.PostRequestAdapter;
+import in.edu.jaduniv.classroom.adapters.PostRequestAdapter.RecyclerViewEmptyListener;
 import in.edu.jaduniv.classroom.interfaces.ValueEventListener;
 import in.edu.jaduniv.classroom.object.Post;
 import in.edu.jaduniv.classroom.utility.FirebaseUtils;
-import in.edu.jaduniv.classroom.adapters.PostRequestAdapter;
-import in.edu.jaduniv.classroom.adapters.PostRequestAdapter.RecyclerViewEmptyListener;
 import jp.wasabeef.recyclerview.animators.FadeInAnimator;
 
 public class PostRequests extends AppCompatActivity {
@@ -34,12 +36,9 @@ public class PostRequests extends AppCompatActivity {
     PostRequestAdapter postRequestAdapter;
 
     RecyclerViewEmptyListener emptyListener;
-
-    private String classCode;
-
     Toolbar toolbar;
-
     FirebaseUtils.AdminState adminState;
+    private String classCode;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,13 +53,16 @@ public class PostRequests extends AppCompatActivity {
     }
 
     private void initializeVariables() {
-        toolbar = (Toolbar) findViewById(R.id.toolbar_post_req);
-        tvRvEmmpty = (TextView) findViewById(R.id.tv_empty_rv);
+        toolbar = findViewById(R.id.toolbar_post_req);
+        tvRvEmmpty = findViewById(R.id.tv_empty_rv);
         toolbar.setTitle("");
         setSupportActionBar(toolbar);
-        getSupportActionBar().setHomeAsUpIndicator(R.drawable.up_button);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        final ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setHomeAsUpIndicator(R.drawable.up_button);
+            actionBar.setDisplayShowHomeEnabled(true);
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
 
         try {
             adminState = new FirebaseUtils.AdminState(classCode, new ValueEventListener() {
@@ -77,7 +79,7 @@ public class PostRequests extends AppCompatActivity {
             Log.e("User not defined", "Probably user is not signed in");
         }
 
-        rvPostRequests = (RecyclerView) findViewById(R.id.rv_post_requests);
+        rvPostRequests = findViewById(R.id.rv_post_requests);
         rvPostRequests.setItemAnimator(new FadeInAnimator());
         postRequests = new ArrayList<>();
         postRequestKeys = new ArrayList<>();
@@ -101,7 +103,7 @@ public class PostRequests extends AppCompatActivity {
     private void loadPostRequests() {
         FirebaseUtils.getDatabaseReference().child("classes").child(classCode).child("post_req").addChildEventListener(new ChildEventListener() {
             @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, String s) {
                 String title = (String) dataSnapshot.child("title").getValue();
                 String description = (String) dataSnapshot.child("description").getValue();
                 boolean pinned = (boolean) dataSnapshot.child("pinned").getValue();
@@ -122,19 +124,19 @@ public class PostRequests extends AppCompatActivity {
             }
 
             @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, String s) {
             }
 
             @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
             }
 
             @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, String s) {
             }
 
             @Override
-            public void onCancelled(DatabaseError databaseError) {
+            public void onCancelled(@NonNull DatabaseError databaseError) {
             }
         });
     }

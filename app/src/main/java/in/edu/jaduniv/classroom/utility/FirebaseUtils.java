@@ -2,7 +2,6 @@ package in.edu.jaduniv.classroom.utility;
 
 import android.support.annotation.NonNull;
 
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -17,8 +16,6 @@ import in.edu.jaduniv.classroom.object.CurrentUser;
 public final class FirebaseUtils {
 
     public static int PERMISSION_STORAGE = 2000;
-
-    //private static FirebaseAuth.AuthStateListener authStateListener = null;
 
     //Stores our database instance
     private static FirebaseDatabase mDatabase = null;
@@ -81,72 +78,6 @@ public final class FirebaseUtils {
         return isOnline;
     } */
 
-    /*
-    //Sets the current user
-    public static void setCurrentUser(CurrentUser user) {
-        currentUser = user;
-    }*/
-
-    /*
-    //Returns the current user
-
-    public static CurrentUser getCurrentUser() {
-        if (currentUser == null) {
-            currentUser = CurrentUser.getInstance();
-        }
-        return currentUser;
-    }*/
-
-    /*public static FirebaseAuth.AuthStateListener getAuthStateListener() {
-        return authStateListener;
-    }*/
-
-    /*public static synchronized void setupFirebaseAuth(final Context context) {
-        if (authStateListener == null) {
-            authStateListener = new FirebaseAuth.AuthStateListener() {
-                @Override
-                public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                    if (user != null) {
-                        //try {
-                            //TODO: User logged-in already.
-                            //CurrentUser.getInstance().setPhone(in.edu.jaduniv.classroom.object.CurrentUser.getInstance().getPhone(context));
-                        //} catch (IllegalAccessException e) {
-                        //    Log.e("User not defined", "Probably user is not signed in");
-                       // }
-                    } else {
-                        Intent loginIntent = new Intent(context, LoginInfoActivity.class);
-                        ((Activity) context).startActivityForResult(loginIntent, LoginInfoActivity.RC_LOGIN_INFO);
-                    }
-                }
-            };
-            FirebaseAuth.getInstance().addAuthStateListener(authStateListener);
-        }
-    }*/
-/*
-    //Setup Firebase's AuthStateListener
-    public static void setupFirebaseAuthStateListener(final Context context, final Activity activity, final FirebaseAuthChangeListener listener) {
-        authStateListener = new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                getCurrentUser().setFirebaseUser(firebaseAuth.getCurrentUser());
-                if (CurrentUser.firebaseUser != null) {
-                    if (ContextCompat.checkSelfPermission(context,
-                            Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                            != PackageManager.PERMISSION_GRANTED) {
-                        ActivityCompat.requestPermissions(activity,
-                                new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                                PERMISSION_STORAGE);
-                    }
-                    listener.onAlreadySigned();
-                } else {
-                    listener.onSignIn();
-                }
-            }
-        };
-        FirebaseAuth.getInstance().addAuthStateListener(authStateListener);
-    }*/
-
     /**
      * Contains state of admin and performs required tasks
      */
@@ -190,14 +121,17 @@ public final class FirebaseUtils {
                     .addValueEventListener(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            isAdmin = dataSnapshot.getValue(Boolean.class);
+                            Boolean fetchedAdmin = dataSnapshot.getValue(Boolean.class);
+                            isAdmin = false;
+                            if (fetchedAdmin != null)
+                                isAdmin = fetchedAdmin;
                             synchronized (AdminState.this) {
                                 valueEventListener.onValueChanged(isAdmin, null);
                             }
                         }
 
                         @Override
-                        public void onCancelled(DatabaseError databaseError) {
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
                         }
                     });
         }
@@ -209,56 +143,4 @@ public final class FirebaseUtils {
             return isAdmin;
         }
     }
-
-    /*public static final class CurrentUser {
-        private static User user = null;
-        private static FirebaseUser firebaseUser = null;
-        private static CurrentUser currentUser = null;
-
-        private CurrentUser() {
-            user = null;
-            firebaseUser = null;
-        }
-
-        private CurrentUser(User user, FirebaseUser firebaseUser) {
-            CurrentUser.user = user;
-            CurrentUser.firebaseUser = firebaseUser;
-        }
-
-        public static CurrentUser getInstance() {
-            if (currentUser == null) {
-                currentUser = new CurrentUser();
-            }
-            return currentUser;
-        }
-
-        public static CurrentUser getInstance(User user, FirebaseUser firebaseUser) {
-            if (currentUser == null) {
-                currentUser = new CurrentUser(user, firebaseUser);
-            }
-            return currentUser;
-        }
-
-        public User getUser() {
-            if (user == null) {
-                user = new User();
-            }
-            return user;
-        }
-
-        public void setUser(User user) {
-            CurrentUser.user = user;
-        }
-
-        public FirebaseUser getFirebaseUser() {
-            if (firebaseUser == null) {
-                firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-            }
-            return firebaseUser;
-        }
-
-        public void setFirebaseUser(FirebaseUser firebaseUser) {
-            CurrentUser.firebaseUser = firebaseUser;
-        }
-    }*/
 }

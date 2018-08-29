@@ -36,6 +36,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.iid.FirebaseInstanceId;
 
 import java.util.ArrayList;
@@ -47,6 +48,7 @@ import in.edu.jaduniv.classroom.R;
 import in.edu.jaduniv.classroom.fragment.ClassFragment;
 import in.edu.jaduniv.classroom.fragment.NavigationDrawerNoClass;
 import in.edu.jaduniv.classroom.object.CurrentUser;
+import in.edu.jaduniv.classroom.object.JoinRequest;
 import in.edu.jaduniv.classroom.other.GlideApp;
 import in.edu.jaduniv.classroom.utility.FirebaseUtils;
 
@@ -58,6 +60,7 @@ public class MainActivity extends AppCompatActivity {
     public static DatabaseReference referenceUsers;
     public static DatabaseReference referenceClasses;
     public static int navItemSelectedIndex = -1;
+    private static DatabaseReference referenceJoinReq = null;
     FirebaseDatabase firebaseDatabase;
     DrawerLayout drawer;
     NavigationView navigationView;
@@ -478,7 +481,33 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.menu_new_class:/*
+            case R.id.menu_new_class:
+                try {
+                    if (CurrentUser.getFirebaseUser() == null) {
+                        Toast.makeText(this, "Please wait!", Toast.LENGTH_SHORT).show();
+                        break;
+                    }
+                    CurrentUser user = CurrentUser.getInstance();
+                    final JoinRequest joinRequest = new JoinRequest(user.getName(), user.getPhone());
+                    DatabaseReference juitRef = referenceClasses.child("juit1620");
+                    if (referenceJoinReq == null)
+                        referenceJoinReq = juitRef.child("join_req");
+                    juitRef.child("participants").child(user.getPhone()).addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            if (!dataSnapshot.exists()) {
+                                referenceJoinReq.push().setValue(joinRequest);
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+                        }
+                    });
+                } catch (IllegalAccessException e) {
+                    Log.e("User not defined", "Probably user is not signed in");
+                }
+                /*
                 String[] joinOrCreate = {"Join a class", "Create a class"};
                 AlertDialog.Builder joinCreateBuilder = new AlertDialog.Builder(this);
                 joinCreateBuilder.setAdapter(new ListAdapter() {
@@ -553,6 +582,7 @@ public class MainActivity extends AppCompatActivity {
                 joinCreateBuilder.show();
                 break;*/
                 Toast.makeText(this, "This feature is coming soon", Toast.LENGTH_SHORT).show();
+                break;
         }
         return super.onOptionsItemSelected(item);
     }

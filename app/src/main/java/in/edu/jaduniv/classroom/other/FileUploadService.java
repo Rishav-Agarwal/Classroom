@@ -21,6 +21,7 @@ import com.google.firebase.database.ServerValue;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 
 import in.edu.jaduniv.classroom.R;
@@ -69,7 +70,7 @@ public class FileUploadService extends IntentService {
                         final NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
                         Cloudinary cloudinary = CloudinaryUtils.getInstance();
                         try {
-                            Map<String, String> config = CloudinaryUtils.getCloudinaryConfig();
+                            Map<String, String> config = new HashMap<>(CloudinaryUtils.getCloudinaryConfig());
                             config.put("folder", "classroom/juit1620/posts/");
                             //config.put("public_id", new File(Uri.parse(fileUri).getPath()).getName());
                             Map upload = null;
@@ -81,7 +82,7 @@ public class FileUploadService extends IntentService {
                                             Toast.makeText(getApplicationContext(), "Download cancelled", Toast.LENGTH_SHORT).show();
                                             return;
                                         }
-                                        Log.d("Progress", bytesUploaded + " of " + totalBytes);
+                                        //Log.d("Progress", bytesUploaded + " of " + totalBytes);
                                         Intent postIntent = new Intent(getApplicationContext(), EventAndNotice.class);
                                         postIntent.putExtra("class", classCode);
                                         PendingIntent postPendingIntent = PendingIntent.getActivity(getApplicationContext(), 1000, postIntent, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -122,6 +123,9 @@ public class FileUploadService extends IntentService {
                         }
                     } else {
                         if (content != null && !content.trim().equals("")) {
+                            if (name.equals(null) || name.equals("") || name.startsWith("undefined") || name.startsWith("null"))
+                                name = "Admin";
+                            Log.d("NAME :: PHONE", name + " :: " + phone);
                             Post post = new Post(title, content, pinned, phone, name, ServerValue.TIMESTAMP, longTime, null, fileName, null, null);
                             completeListener.onUploadCompleted(post);
                         }

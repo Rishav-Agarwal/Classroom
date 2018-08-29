@@ -5,7 +5,8 @@ public class Participant {
     private String phone;
     private String name;
 
-    public Participant() {}
+    public Participant() {
+    }
 
     public Participant(boolean admin, String phone, String name) {
         this.admin = admin;

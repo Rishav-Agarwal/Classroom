@@ -52,6 +52,7 @@ public class EventAndNotice extends AppCompatActivity {
     public static String attachedUri = null;
     public static FileUploadService.OnUploadCompleteListener listener;
     private static EventAndNotice eventAndNotice = null;
+
     //Listview which contains the posts
     ListView lvPosts;
     //Adapter for the listview
@@ -238,7 +239,8 @@ public class EventAndNotice extends AppCompatActivity {
         adminState = new FirebaseUtils.AdminState(classCode, new in.edu.jaduniv.classroom.interfaces.ValueEventListener() {
             @Override
             public void onValueChanged(Object newValue, Object oldValue) {
-                invalidateOptionsMenu();
+                Log.d("Admin", newValue.toString());
+                supportInvalidateOptionsMenu();
             }
         });
     }
@@ -384,6 +386,7 @@ public class EventAndNotice extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        Log.d("onCreateOptionsMenu", menu.toString());
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.post_menu, menu);
         return true;
@@ -391,6 +394,7 @@ public class EventAndNotice extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        Log.d("Item selected", item.toString());
         switch (item.getItemId()) {
             case R.id.menu_post_requests:
                 Intent postReqIntent = new Intent(this, PostRequests.class);
@@ -403,6 +407,7 @@ public class EventAndNotice extends AppCompatActivity {
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
+        Log.d("onPrepareOptions", menu.toString());
         MenuItem item = menu.findItem(R.id.menu_post_requests);
         if (adminState.isAdmin()) {
             item.setVisible(true);

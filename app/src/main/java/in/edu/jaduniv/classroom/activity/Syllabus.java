@@ -8,9 +8,9 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Bundle;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.view.menu.MenuBuilder;
 import android.support.v7.view.menu.MenuPopupHelper;
 import android.support.v7.widget.Toolbar;
@@ -36,9 +36,9 @@ import java.io.File;
 import java.util.ArrayList;
 
 import in.edu.jaduniv.classroom.R;
+import in.edu.jaduniv.classroom.adapters.SyllabusAdapter;
 import in.edu.jaduniv.classroom.other.DownloadDbHelper;
 import in.edu.jaduniv.classroom.utility.FirebaseUtils;
-import in.edu.jaduniv.classroom.adapters.SyllabusAdapter;
 
 public class Syllabus extends AppCompatActivity {
 

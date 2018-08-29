@@ -23,35 +23,35 @@ public class User {
         this.classes = classes;
     }
 
-    public void setName(String name) throws IllegalAccessException {
-        this.name = name;
-    }
-
-    public void setEmail(String email) throws IllegalAccessException {
-        this.email = email;
-    }
-
-    public void setClasses(ArrayList<String> classes) throws IllegalAccessException {
-        this.classes = classes;
-    }
-
-    public void setToken(String token) throws IllegalAccessException {
-        this.token = token;
-    }
-
     public String getName() throws IllegalAccessException {
         return name;
+    }
+
+    public void setName(String name) throws IllegalAccessException {
+        this.name = name;
     }
 
     public String getEmail() throws IllegalAccessException {
         return email;
     }
 
+    public void setEmail(String email) throws IllegalAccessException {
+        this.email = email;
+    }
+
     public ArrayList<String> getClasses() throws IllegalAccessException {
         return classes;
     }
 
+    public void setClasses(ArrayList<String> classes) throws IllegalAccessException {
+        this.classes = classes;
+    }
+
     public String getToken() throws IllegalAccessException {
         return token;
+    }
+
+    public void setToken(String token) throws IllegalAccessException {
+        this.token = token;
     }
 }

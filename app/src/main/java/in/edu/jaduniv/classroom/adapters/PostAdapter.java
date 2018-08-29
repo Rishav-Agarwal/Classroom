@@ -2,19 +2,13 @@ package in.edu.jaduniv.classroom.adapters;
 
 import android.annotation.SuppressLint;
 import android.app.DownloadManager;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.FileProvider;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.menu.MenuBuilder;
 import android.support.v7.view.menu.MenuPopupHelper;
 import android.util.Log;
@@ -27,26 +21,14 @@ import android.webkit.MimeTypeMap;
 import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ServerValue;
-import com.google.firebase.database.ValueEventListener;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Locale;
 
 import in.edu.jaduniv.classroom.R;
-import in.edu.jaduniv.classroom.activity.EventAndNotice;
-import in.edu.jaduniv.classroom.activity.Syllabus;
-import in.edu.jaduniv.classroom.fragment.FileSelectedFragment;
 import in.edu.jaduniv.classroom.object.Post;
 import in.edu.jaduniv.classroom.other.DownloadDbHelper;
 
@@ -97,11 +79,11 @@ public class PostAdapter extends ArrayAdapter<Post> {
 
         final Post post = postArrayList.get(position);
 
-        final TextView tvSender = (TextView) ConvertView.findViewById(R.id.tv_sender_name);
-        final TextView tvPostTitle = (TextView) ConvertView.findViewById(R.id.tv_post_title);
-        final TextView tvPostDescription = (TextView) ConvertView.findViewById(R.id.tv_post_description);
-        final TextView tvPostTime = (TextView) ConvertView.findViewById(R.id.tv_post_time);
-        final LinearLayout llFile = (LinearLayout) ConvertView.findViewById(R.id.ll_file);
+        final TextView tvSender = ConvertView.findViewById(R.id.tv_sender_name);
+        final TextView tvPostTitle = ConvertView.findViewById(R.id.tv_post_title);
+        final TextView tvPostDescription = ConvertView.findViewById(R.id.tv_post_description);
+        final TextView tvPostTime = ConvertView.findViewById(R.id.tv_post_time);
+        final LinearLayout llFile = ConvertView.findViewById(R.id.ll_file);
 
         String postedByName = post.getPostedByName();
         tvSender.setText(postedByName);

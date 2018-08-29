@@ -2,6 +2,7 @@ package in.edu.jaduniv.classroom.fragment;
 
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -18,18 +19,17 @@ import in.edu.jaduniv.classroom.activity.EventAndNotice;
 
 public class FileSelectedFragment extends Fragment {
 
-    private String uri;
-    private String fileName;
-
     TextView tvFileName;
     ImageView ivRemoveFile;
+    private String uri;
+    private String fileName;
 
     public FileSelectedFragment() {
         // Required empty public constructor
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         uri = getArguments().getString("uri");

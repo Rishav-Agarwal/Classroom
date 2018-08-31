@@ -1,6 +1,5 @@
 package in.edu.jaduniv.classroom.activity;
 
-import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -9,9 +8,7 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -45,10 +42,10 @@ import in.edu.jaduniv.classroom.object.Post;
 import in.edu.jaduniv.classroom.other.FileUploadService;
 import in.edu.jaduniv.classroom.utility.CloudinaryUtils;
 import in.edu.jaduniv.classroom.utility.FirebaseUtils;
+import in.edu.jaduniv.classroom.utility.PermissionUtils;
 
 public class EventAndNotice extends AppCompatActivity {
     private static final int RC_CHOOSE_FILE = 1000;
-    private static final int PERMISSION_STORAGE_SEND_POST = 9999;
     public static String attachedUri = null;
     public static FileUploadService.OnUploadCompleteListener listener;
     private static EventAndNotice eventAndNotice = null;
@@ -135,8 +132,12 @@ public class EventAndNotice extends AppCompatActivity {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if (requestCode == PERMISSION_STORAGE_SEND_POST) {
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+        if (requestCode == PermissionUtils.WRITE_EXTERNAL_STORAGE) {
+            if (grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(this, "Permission denied! :(\nWe need your consent to do that.", Toast.LENGTH_SHORT).show();
+
+                //WHEN PERMISSION GRANTED - NOT REQUIRED NOW [MIGHT BE REMOVED TOTALLY]
+                /*
                 String strPost = etSendPost.getText().toString().trim();
                 String fileName;
                 try {
@@ -187,6 +188,8 @@ public class EventAndNotice extends AppCompatActivity {
                 attachedUri = null;
             } else {
                 Toast.makeText(this, "Permission denied\nCan't send message", Toast.LENGTH_SHORT).show();
+            }
+            */
             }
         }
     }
@@ -251,12 +254,8 @@ public class EventAndNotice extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if (isNetworkConnected()) {
-                    if (ContextCompat.checkSelfPermission(EventAndNotice.this,
-                            Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                            != PackageManager.PERMISSION_GRANTED) {
-                        ActivityCompat.requestPermissions(EventAndNotice.this,
-                                new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                                PERMISSION_STORAGE_SEND_POST);
+                    if (!PermissionUtils.isPermitted(EventAndNotice.this, PermissionUtils.Permissions.WRITE_EXTERNAL_STORAGE)) {
+                        PermissionUtils.request(EventAndNotice.this, PermissionUtils.WRITE_EXTERNAL_STORAGE, PermissionUtils.Permissions.WRITE_EXTERNAL_STORAGE);
                     } else {
                         String strPost = etSendPost.getText().toString().trim();
                         String fileName;

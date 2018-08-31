@@ -60,8 +60,8 @@ public class SyllabusAdapter extends BaseAdapter {
         TextView tvSubject;
         ImageView ivOverflow;
         if (convertView != null) {
-            tvSubject = (TextView) convertView.findViewById(R.id.tv_subject);
-            ivOverflow = (ImageView) convertView.findViewById(R.id.iv_syllbus_item_overflow);
+            tvSubject = convertView.findViewById(R.id.tv_subject);
+            ivOverflow = convertView.findViewById(R.id.iv_syllbus_item_overflow);
 
             tvSubject.setText(syllabusList.get(position).getSubject());
             final View finalConvertView = convertView;

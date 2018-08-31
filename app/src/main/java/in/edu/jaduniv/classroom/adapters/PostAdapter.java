@@ -1,6 +1,7 @@
 package in.edu.jaduniv.classroom.adapters;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.DownloadManager;
 import android.content.Context;
 import android.content.Intent;
@@ -31,6 +32,7 @@ import java.util.Date;
 import in.edu.jaduniv.classroom.R;
 import in.edu.jaduniv.classroom.object.Post;
 import in.edu.jaduniv.classroom.other.DownloadDbHelper;
+import in.edu.jaduniv.classroom.utility.PermissionUtils;
 
 public class PostAdapter extends ArrayAdapter<Post> {
 
@@ -46,9 +48,11 @@ public class PostAdapter extends ArrayAdapter<Post> {
     }
 
     @Override
-    public void add(@Nullable Post post) {
-        super.add(post);
-        postArrayList.add(post);
+    public void add(Post post) {
+        if (post != null) {
+            super.add(post);
+            postArrayList.add(post);
+        }
     }
 
     @Override
@@ -71,7 +75,7 @@ public class PostAdapter extends ArrayAdapter<Post> {
     @Override
     public View getView(final int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         if (convertView == null) {
-            LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            LayoutInflater inflater = LayoutInflater.from(context);
             convertView = inflater.inflate(R.layout.post, parent, false);
         }
 
@@ -147,9 +151,12 @@ public class PostAdapter extends ArrayAdapter<Post> {
                         Cursor cursor = dm.query(query);
                         Log.d("cursor", cursor + "");
                         if (cursor == null || !cursor.moveToFirst()) {
-                            downloadId = downloadFile(position);
                             Log.d("downloadId", downloadId + "");
-                            DownloadDbHelper.getInstance(context).addDownload(context.getPackageName() + "." + classCode + ".Post." + post.getLongTime(), downloadId);
+                            Long _id = downloadFile(position);
+                            if (_id == null)
+                                return;
+                            downloadId = _id;
+                            DownloadDbHelper.getInstance(context).addDownload(context.getPackageName() + "." + classCode + ".Posts." + post.getLongTime(), downloadId);
                             return;
                         }
                         int columnIndex = cursor.getColumnIndex(DownloadManager.COLUMN_STATUS);
@@ -157,13 +164,17 @@ public class PostAdapter extends ArrayAdapter<Post> {
                         int filePathInt = cursor.getColumnIndex(DownloadManager.COLUMN_LOCAL_URI);
                         String filePath = cursor.getString(filePathInt);
 
+                        Long _id;
                         switch (downloadStatus) {
                             case DownloadManager.STATUS_FAILED:
                                 Log.d("Download status", "STATUS_FAILED");
                             case DownloadManager.ERROR_FILE_ERROR:
                                 Log.d("Download status", "ERROR_FILE_ERROR");
                                 boolean deleted = deleteDoc(filePath);
-                                downloadId = downloadFile(position);
+                                _id = downloadFile(position);
+                                if (_id == null)
+                                    break;
+                                downloadId = _id;
                                 DownloadDbHelper.getInstance(context).addDownload(context.getPackageName() + "." + classCode + ".Posts." + post.getLongTime(), downloadId);
                                 break;
 
@@ -172,7 +183,10 @@ public class PostAdapter extends ArrayAdapter<Post> {
                                 if (filePath != null) {
                                     if (!openDoc(filePath)) {
                                         boolean isDeleted = deleteDoc(filePath);
-                                        downloadId = downloadFile(position);
+                                        _id = downloadFile(position);
+                                        if (_id == null)
+                                            break;
+                                        downloadId = _id;
                                         DownloadDbHelper.getInstance(context).addDownload(context.getPackageName() + "." + classCode + ".Posts." + post.getLongTime(), downloadId);
                                     }
                                 } else {
@@ -187,13 +201,19 @@ public class PostAdapter extends ArrayAdapter<Post> {
                                 Log.d("Download status", "STATUS_PENDING | RUNNING | PAUSED");
                                 dm.remove(downloadReference);
                                 boolean isDeleted = deleteDoc(filePath);
-                                downloadId = downloadFile(position);
+                                _id = downloadFile(position);
+                                if (_id == null)
+                                    break;
+                                downloadId = _id;
                                 DownloadDbHelper.getInstance(context).addDownload(context.getPackageName() + "." + classCode + ".Posts." + post.getLongTime(), downloadId);
                                 break;
                         }
                     } else {
-                        downloadId = downloadFile(position);
                         Log.d("downloadId", downloadId + "");
+                        Long _id = downloadFile(position);
+                        if (_id == null)
+                            return;
+                        downloadId = _id;
                         DownloadDbHelper.getInstance(context).addDownload(context.getPackageName() + "." + classCode + ".Posts." + post.getLongTime(), downloadId);
                     }
 
@@ -214,7 +234,7 @@ public class PostAdapter extends ArrayAdapter<Post> {
         return ConvertView;
     }
 
-    private Long downloadFile(int position) {
+    private Long downloadWithPermission(int position) {
         Long downloadId = null;
         Post post = getItem(position);
         if (post != null) {
@@ -230,10 +250,18 @@ public class PostAdapter extends ArrayAdapter<Post> {
                     downloadId = manager.enqueue(request);
                 }
             } catch (Exception e) {
+                Log.e("Error dowloading file", e.getMessage());
                 e.printStackTrace();
             }
         }
         return downloadId;
+    }
+
+    private Long downloadFile(int position) {
+        if (PermissionUtils.isPermitted(context, PermissionUtils.Permissions.WRITE_EXTERNAL_STORAGE))
+            return downloadWithPermission(position);
+        PermissionUtils.request((Activity) context, PermissionUtils.WRITE_EXTERNAL_STORAGE, PermissionUtils.Permissions.WRITE_EXTERNAL_STORAGE);
+        return null;
     }
 
     private boolean deleteDoc(String uri) {
@@ -251,11 +279,9 @@ public class PostAdapter extends ArrayAdapter<Post> {
     private boolean openDoc(String uri) {
         Intent open = new Intent(Intent.ACTION_VIEW);
         open.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-        String mimeType;
-        String extension;
-        extension = MimeTypeMap.getFileExtensionFromUrl(uri);
+        String extension = MimeTypeMap.getFileExtensionFromUrl(uri);
         if (uri != null && extension != null) {
-            mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
+            String mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
             open.setDataAndType(FileProvider.getUriForFile(context, context.getPackageName() + ".provider", new File(Uri.parse(uri).getPath())), mimeType);
             Intent openChooser = Intent.createChooser(open, "Choose app");
             context.startActivity(openChooser);
@@ -277,7 +303,10 @@ public class PostAdapter extends ArrayAdapter<Post> {
         menuBuilder.setCallback(new MenuBuilder.Callback() {
             @Override
             public boolean onMenuItemSelected(MenuBuilder menu, MenuItem item) {
-                long downloadId = downloadFile(position);
+                Long _id = downloadFile(position);
+                if (_id == null)
+                    return false;
+                long downloadId = _id;
                 if (post != null)
                     DownloadDbHelper.getInstance(context).addDownload(context.getPackageName() + "." + classCode + ".Posts." + post.getLongTime(), downloadId);
                 return false;

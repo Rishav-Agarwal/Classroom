@@ -6,10 +6,13 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.content.FileProvider;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.menu.MenuBuilder;
 import android.support.v7.view.menu.MenuPopupHelper;
@@ -39,25 +42,21 @@ import in.edu.jaduniv.classroom.R;
 import in.edu.jaduniv.classroom.adapters.SyllabusAdapter;
 import in.edu.jaduniv.classroom.other.DownloadDbHelper;
 import in.edu.jaduniv.classroom.utility.FirebaseUtils;
+import in.edu.jaduniv.classroom.utility.PermissionUtils;
 
 public class Syllabus extends AppCompatActivity {
 
+    private static int lastPos = -1;
     DatabaseReference subjectReference;
-
     Toolbar toolbar;
-
     String classCode;
-
     //Intent to receive the class code
     Intent intent;
-
     ArrayList<in.edu.jaduniv.classroom.object.Syllabus> syllabi;
     ArrayList<String> syllabusKeys;
     SyllabusAdapter syllabusAdapter;
     GridView gvSyllabus;
-
     DownloadManager dm;
-
     BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -96,12 +95,15 @@ public class Syllabus extends AppCompatActivity {
         dm = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
 
         //Setup the toolbar
-        toolbar = (Toolbar) findViewById(R.id.toolbar_syllabus);
+        toolbar = findViewById(R.id.toolbar_syllabus);
         toolbar.setTitle("");
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setHomeAsUpIndicator(R.drawable.up_button);
+        final ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setDisplayShowHomeEnabled(true);
+            actionBar.setHomeAsUpIndicator(R.drawable.up_button);
+        }
 
         //Setup syllabus arraylist and adapter
         syllabi = new ArrayList<>();
@@ -114,20 +116,22 @@ public class Syllabus extends AppCompatActivity {
         });
 
         //Setup the GridVew
-        gvSyllabus = (GridView) findViewById(R.id.grid_view_syllabus);
+        gvSyllabus = findViewById(R.id.grid_view_syllabus);
         DisplayMetrics displayMetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-        int width = (int) (displayMetrics.widthPixels / displayMetrics.densityDpi) * 160;
+        int width = (displayMetrics.widthPixels / displayMetrics.densityDpi) * 160;
         Log.d("WIDTH", width + "");
-        if (width > 400) {
+        /*
+         * If device's width is less than 600, set number of columns in the GridView to be 3
+         * If device's width is greater than or equal to 600 but less than 700, set the number of columns to be 4
+         * If width is greater than or equal to 700, set the number of columns to be 5
+         */
+        if (width >= 400)
             gvSyllabus.setNumColumns(3);
-        }
-        if (width > 600) {
+        if (width >= 600)
             gvSyllabus.setNumColumns(4);
-        }
-        if (width > 700) {
+        if (width >= 700)
             gvSyllabus.setNumColumns(5);
-        }
         Animation anim = AnimationUtils.loadAnimation(this, R.anim.class_item_anim);
         GridLayoutAnimationController animationController = new GridLayoutAnimationController(anim);
         gvSyllabus.setLayoutAnimation(animationController);
@@ -149,8 +153,11 @@ public class Syllabus extends AppCompatActivity {
                     Cursor cursor = dm.query(query);
                     Log.d("cursor", cursor + "");
                     if (cursor == null || !cursor.moveToFirst()) {
-                        downloadId = downloadFile(position);
                         Log.d("downloadId", downloadId + "");
+                        Long _id = downloadFile(position);
+                        if (_id == null)
+                            return;
+                        downloadId = _id;
                         DownloadDbHelper.getInstance(getApplicationContext()).addDownload(getPackageName() + "." + classCode + ".Syllabus." + ((in.edu.jaduniv.classroom.object.Syllabus) (syllabusAdapter.getItem(position))).getSubject(), downloadId);
                         return;
                     }
@@ -159,13 +166,17 @@ public class Syllabus extends AppCompatActivity {
                     int filePathInt = cursor.getColumnIndex(DownloadManager.COLUMN_LOCAL_URI);
                     String filePath = cursor.getString(filePathInt);
 
+                    Long _id;
                     switch (downloadStatus) {
                         case DownloadManager.STATUS_FAILED:
                             Log.d("Download status", "STATUS_FAILED");
                         case DownloadManager.ERROR_FILE_ERROR:
+                            _id = downloadFile(position);
+                            if (_id == null)
+                                break;
+                            downloadId = _id;
                             Log.d("Download status", "ERROR_FILE_ERROR");
                             boolean deleted = deleteDoc(filePath);
-                            downloadId = downloadFile(position);
                             DownloadDbHelper.getInstance(getApplicationContext()).addDownload(getPackageName() + "." + classCode + ".Syllabus." + ((in.edu.jaduniv.classroom.object.Syllabus) (syllabusAdapter.getItem(position))).getSubject(), downloadId);
                             break;
 
@@ -174,11 +185,17 @@ public class Syllabus extends AppCompatActivity {
                             if (filePath != null) {
                                 if (!openDoc(filePath)) {
                                     boolean isDeleted = deleteDoc(filePath);
-                                    downloadId = downloadFile(position);
+                                    _id = downloadFile(position);
+                                    if (_id == null)
+                                        break;
+                                    downloadId = _id;
                                     DownloadDbHelper.getInstance(getApplicationContext()).addDownload(getPackageName() + "." + classCode + ".Syllabus." + ((in.edu.jaduniv.classroom.object.Syllabus) (syllabusAdapter.getItem(position))).getSubject(), downloadId);
                                 }
                             } else {
-                                downloadFile(position);
+                                _id = downloadFile(position);
+                                if (_id == null)
+                                    break;
+                                downloadId = _id;
                                 DownloadDbHelper.getInstance(getApplicationContext()).addDownload(getPackageName() + "." + classCode + ".Syllabus." + ((in.edu.jaduniv.classroom.object.Syllabus) (syllabusAdapter.getItem(position))).getSubject(), downloadId);
                             }
                             break;
@@ -189,13 +206,19 @@ public class Syllabus extends AppCompatActivity {
                             Log.d("Download status", "STATUS_PENDING | RUNNING | PAUSED");
                             dm.remove(downloadReference);
                             boolean isDeleted = deleteDoc(filePath);
-                            downloadId = downloadFile(position);
+                            _id = downloadFile(position);
+                            if (_id == null)
+                                break;
+                            downloadId = _id;
                             DownloadDbHelper.getInstance(getApplicationContext()).addDownload(getPackageName() + "." + classCode + ".Syllabus." + ((in.edu.jaduniv.classroom.object.Syllabus) (syllabusAdapter.getItem(position))).getSubject(), downloadId);
                             break;
                     }
                 } else {
-                    downloadId = downloadFile(position);
                     Log.d("downloadId", downloadId + "");
+                    Long _id = downloadFile(position);
+                    if (_id == null)
+                        return;
+                    downloadId = _id;
                     DownloadDbHelper.getInstance(getApplicationContext()).addDownload(getPackageName() + "." + classCode + ".Syllabus." + ((in.edu.jaduniv.classroom.object.Syllabus) (syllabusAdapter.getItem(position))).getSubject(), downloadId);
                 }
             }
@@ -218,13 +241,13 @@ public class Syllabus extends AppCompatActivity {
         subjectReference = FirebaseUtils.getDatabaseReference().child("classes").child(classCode).child("syllabus");
         subjectReference.addChildEventListener(new ChildEventListener() {
             @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, String s) {
                 in.edu.jaduniv.classroom.object.Syllabus syllabus = dataSnapshot.getValue(in.edu.jaduniv.classroom.object.Syllabus.class);
                 syllabusAdapter.add(syllabus, dataSnapshot.getKey());
             }
 
             @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, String s) {
                 in.edu.jaduniv.classroom.object.Syllabus syllabus = dataSnapshot.getValue(in.edu.jaduniv.classroom.object.Syllabus.class);
                 int index = syllabusKeys.indexOf(dataSnapshot.getKey());
                 syllabi.set(index, syllabus);
@@ -232,8 +255,8 @@ public class Syllabus extends AppCompatActivity {
             }
 
             @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-                in.edu.jaduniv.classroom.object.Syllabus syllabus = dataSnapshot.getValue(in.edu.jaduniv.classroom.object.Syllabus.class);
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+                //in.edu.jaduniv.classroom.object.Syllabus syllabus = dataSnapshot.getValue(in.edu.jaduniv.classroom.object.Syllabus.class);
                 int index = syllabusKeys.indexOf(dataSnapshot.getKey());
                 syllabi.remove(index);
                 syllabusKeys.remove(index);
@@ -241,40 +264,54 @@ public class Syllabus extends AppCompatActivity {
             }
 
             @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, String s) {
 
             }
 
             @Override
-            public void onCancelled(DatabaseError databaseError) {
+            public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
         });
     }
 
-    private Long downloadFile(int position) {
+    private Long downloadWithPermission(int position) {
         Long downloadId = null;
-        DownloadManager.Request request = new DownloadManager.Request(Uri.parse(syllabi.get(position).getUrl()));
-        request.setDescription(classCode + "_Syllabus_" + ((in.edu.jaduniv.classroom.object.Syllabus) syllabusAdapter.getItem(position)).getSubject());
-        request.setTitle("Classroom");
-        request.allowScanningByMediaScanner();
-        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-        request.setDestinationInExternalPublicDir("", "/Classroom/" + classCode + "/Syllabus/" + syllabi.get(position).getFileName());
-        DownloadManager manager = (DownloadManager) getApplicationContext().getSystemService(DOWNLOAD_SERVICE);
-        if (manager != null) {
-            downloadId = manager.enqueue(request);
+        final in.edu.jaduniv.classroom.object.Syllabus syllabus = syllabi.get(position);
+        if (syllabus != null) {
+            try {
+                DownloadManager.Request request = new DownloadManager.Request(Uri.parse(syllabus.getUrl()));
+                request.setDescription(classCode + "_Syllabus_" + ((in.edu.jaduniv.classroom.object.Syllabus) syllabusAdapter.getItem(position)).getSubject());
+                request.setTitle("Classroom");
+                request.allowScanningByMediaScanner();
+                request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+                request.setDestinationInExternalPublicDir("", "/Classroom/" + classCode + "/Syllabus/" + syllabus.getFileName());
+                DownloadManager manager = (DownloadManager) getApplicationContext().getSystemService(DOWNLOAD_SERVICE);
+                if (manager != null) {
+                    downloadId = manager.enqueue(request);
+                }
+            } catch (Exception e) {
+                Log.e("Error downloading file", e.getMessage());
+                e.printStackTrace();
+            }
         }
         return downloadId;
+    }
+
+    private Long downloadFile(int position) {
+        if (PermissionUtils.isPermitted(this, PermissionUtils.Permissions.WRITE_EXTERNAL_STORAGE))
+            return downloadWithPermission(position);
+        lastPos = position;
+        PermissionUtils.request(this, PermissionUtils.WRITE_EXTERNAL_STORAGE, PermissionUtils.Permissions.WRITE_EXTERNAL_STORAGE);
+        return null;
     }
 
     private boolean openDoc(String uri) {
         Intent open = new Intent(Intent.ACTION_VIEW);
         open.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-        String mimeType = "*/*";
-        String extension = null;
-        extension = MimeTypeMap.getFileExtensionFromUrl(uri);
+        String extension = MimeTypeMap.getFileExtensionFromUrl(uri);
         if (uri != null && extension != null) {
-            mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
+            String mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
             open.setDataAndType(FileProvider.getUriForFile(getApplicationContext(), getPackageName() + ".provider", new File(Uri.parse(uri).getPath())), mimeType);
             Intent openChooser = Intent.createChooser(open, "Choose app");
             startActivity(openChooser);
@@ -307,7 +344,10 @@ public class Syllabus extends AppCompatActivity {
         menuBuilder.setCallback(new MenuBuilder.Callback() {
             @Override
             public boolean onMenuItemSelected(MenuBuilder menu, MenuItem item) {
-                long downloadId = downloadFile(position);
+                Long _id = downloadFile(position);
+                if (_id == null)
+                    return false;
+                long downloadId = _id;
                 DownloadDbHelper.getInstance(getApplicationContext()).addDownload(getPackageName() + "." + classCode + ".Syllabus." + ((in.edu.jaduniv.classroom.object.Syllabus) (syllabusAdapter.getItem(position))).getSubject(), downloadId);
                 return false;
             }
@@ -319,6 +359,18 @@ public class Syllabus extends AppCompatActivity {
 
         // Display the menu
         downloadMenu.show();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == PermissionUtils.WRITE_EXTERNAL_STORAGE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                downloadWithPermission(lastPos);
+            } else {
+                Toast.makeText(this, "Permission denied! :(\nWe need your consent to do that.", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
     @Override

@@ -488,15 +488,27 @@ public class MainActivity extends AppCompatActivity {
                         break;
                     }
                     CurrentUser user = CurrentUser.getInstance();
-                    final JoinRequest joinRequest = new JoinRequest(user.getName(), user.getPhone());
+                    JoinRequest joinRequest = new JoinRequest(user.getName(), user.getPhone());
                     DatabaseReference juitRef = referenceClasses.child("juit1620");
                     if (referenceJoinReq == null)
                         referenceJoinReq = juitRef.child("join_req");
-                    juitRef.child("participants").child(user.getPhone()).addListenerForSingleValueEvent(new ValueEventListener() {
+                    String phone = user.getPhone();
+                    juitRef.child("participants").child(phone).addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                             if (!dataSnapshot.exists()) {
-                                referenceJoinReq.push().setValue(joinRequest);
+                                referenceJoinReq.child(phone).addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                        if (!dataSnapshot.exists())
+                                            referenceJoinReq.child(phone).setValue(joinRequest);
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                    }
+                                });
                             }
                         }
 

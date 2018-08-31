@@ -33,7 +33,7 @@ public class LoginInfoActivity extends AppCompatActivity {
         String enteredName = etLoginName.getText().toString();
         String enteredEmail = etLoginEmail.getText().toString();
         //validating information provided
-        validInfo = !(enteredName.equals(null) || enteredName.equals("")) && validateEmail(enteredEmail);
+        validInfo = !(enteredName.equals("")) && validateEmail(enteredEmail);
         if (!validInfo) {
             Toast.makeText(this, "Please enter valid information!", Toast.LENGTH_SHORT).show();
         } else {
@@ -48,7 +48,7 @@ public class LoginInfoActivity extends AppCompatActivity {
     //function to check whether the entered email was valid
     private boolean validateEmail(String email) {
         email = email.trim();
-        if (email.equals(null) || email.equals(""))
+        if (email.equals(""))
             return false;
 
         //Regular expression

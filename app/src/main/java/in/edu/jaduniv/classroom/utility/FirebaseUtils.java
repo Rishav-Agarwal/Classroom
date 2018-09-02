@@ -51,7 +51,6 @@ public final class FirebaseUtils {
     public static DatabaseReference getDatabaseReference() {
         if (mReference == null) {
             mReference = FirebaseUtils.getDatabase().getReference();
-            mReference.keepSynced(true);
             /* Get connection status
             mReference.child(".info/connected").addValueEventListener(new ValueEventListener() {
                 @Override

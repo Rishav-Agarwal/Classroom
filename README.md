@@ -12,7 +12,7 @@ A simple android app for students to keep all the important classroom stuffs at 
 ##### CloudinaryUtils.java
 
 ```java
-public class CloudinaryUtils {
+public final class CloudinaryUtils {
     public static final String ACTION_FILE_UPLOAD = "upload_file";
     private static Cloudinary cloudinary = null;
     private static Map<String, String> cloudinaryConfig = null;

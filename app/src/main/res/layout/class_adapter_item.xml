@@ -6,8 +6,8 @@
     android:layout_height="120dp"
     android:foreground="?android:attr/selectableItemBackground"
     app:cardBackgroundColor="#424242"
-    app:cardCornerRadius="4dp"
-    app:cardElevation="4dp">
+    app:cardCornerRadius="2dp"
+    app:cardElevation="2dp">
 
     <TextView
         android:id="@+id/tv_grid_item_title"

@@ -123,7 +123,7 @@ public class FileUploadService extends IntentService {
                         }
                     } else {
                         if (content != null && !content.trim().equals("")) {
-                            if (name.equals(null) || name.equals("") || name.startsWith("undefined") || name.startsWith("null"))
+                            if (name == null || name.equals("") || name.startsWith("undefined") || name.startsWith("null"))
                                 name = "Admin";
                             Log.d("NAME :: PHONE", name + " :: " + phone);
                             Post post = new Post(title, content, pinned, phone, name, ServerValue.TIMESTAMP, longTime, null, fileName, null, null);

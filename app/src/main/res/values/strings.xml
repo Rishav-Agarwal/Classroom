@@ -36,5 +36,6 @@
     <string name="remove_file">Remove file</string>
     <string name="re_download">Download</string>
     <string name="contains_a_file">Contains a file</string>
+    <string name="overflow_menu">Overflow menu</string>
 
 </resources>

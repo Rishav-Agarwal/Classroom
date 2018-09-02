@@ -17,10 +17,10 @@
         android:foreground="?android:attr/selectableItemBackground">
 
         <TextView
-            android:textColor="@color/colorAccent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="JU IT 2016-20"
+            android:textColor="@color/colorAccent"
             android:textSize="20sp" />
     </android.support.v7.widget.Toolbar>
 

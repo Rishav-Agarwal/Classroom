@@ -3,7 +3,7 @@
 
     <!-- Navigation drawer strings resource -->
     <string name="nav_other">Other</string>
-    <string name="nav_about_us">About Us</string>
+    <string name="nav_about_us">About</string>
     <string name="nav_privacy_policy">Privacy Policy</string>
     <string name="nav_head_back_img">Navigation drawer header\'s background image</string>
     <string name="nav_profile_pic">Navigation drawer profile picture</string>
@@ -37,5 +37,10 @@
     <string name="re_download">Download</string>
     <string name="contains_a_file">Contains a file</string>
     <string name="overflow_menu">Overflow menu</string>
+    <string name="participant_profile_picture">Participant profile picture</string>
+    <string name="admin">admin</string>
+    <string name="write_a_message">Write a message</string>
+    <string name="accept_post_req">Accept post request</string>
+    <string name="decline_post_req">Decline post request</string>
 
 </resources>

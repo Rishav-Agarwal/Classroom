@@ -161,7 +161,7 @@ public class PostRequestAdapter extends RecyclerView.Adapter<PostRequestAdapter.
             public void onClick(View view) {
                 FirebaseUtils.getDatabaseReference().child("classes").child(classCode).child("post_req").child(postRequestKeys.get(holder.getAdapterPosition())).removeValue(new DatabaseReference.CompletionListener() {
                     @Override
-                    public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                    public void onComplete(DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
                         Post postRequest = postRequests.get(holder.getAdapterPosition());
                         postRequest.setTime(ServerValue.TIMESTAMP);
                         int index = holder.getAdapterPosition();

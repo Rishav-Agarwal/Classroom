@@ -13,8 +13,7 @@
         android:background="@color/colorPrimary"
         android:clickable="true"
         android:focusable="true"
-        android:foreground="?android:attr/selectableItemBackground"
-        app:titleTextColor="@color/colorAccent" />
+        android:foreground="?android:attr/selectableItemBackground" />
 
     <android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -35,10 +34,9 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_gravity="start"
-            android:background="#424242"
+            android:background="@color/navigationDrawerBackground"
             android:fitsSystemWindows="true"
             app:headerLayout="@layout/navigation_drawer_header"
-            app:itemTextColor="#BDBDBD"
             app:menu="@menu/navigation_drawer_menu"
             app:theme="@style/NavigationTheme">
 

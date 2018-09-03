@@ -1,42 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_gravity="center">
 
     <ImageView
         android:id="@+id/iv_participant_profile_pic"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:contentDescription="@string/app_icon"
-        android:src="@mipmap/ic_launcher_round" />
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:contentDescription="@string/participant_profile_picture" />
 
     <LinearLayout
         android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_marginLeft="8dp"
+        android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:gravity="center_vertical"
         android:orientation="vertical"
         app:layout_constraintLeft_toRightOf="@id/iv_participant_profile_pic">
 
-
         <TextView
             android:id="@+id/tv_participant_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Rishav Agarwal"
             android:textSize="16sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            tools:text="Rishav Agarwal" />
 
         <TextView
             android:id="@+id/tv_participant_phone"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="+918961947395"
             app:layout_constraintLeft_toRightOf="@id/iv_participant_profile_pic"
-            app:layout_constraintTop_toBottomOf="@id/tv_participant_name" />
+            app:layout_constraintTop_toBottomOf="@id/tv_participant_name"
+            tools:text="+918961947395" />
 
     </LinearLayout>
 
@@ -52,7 +50,7 @@
         android:paddingRight="8dp"
         android:paddingStart="8dp"
         android:paddingTop="4dp"
-        android:text="admin"
+        android:text="@string/admin"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintRight_toRightOf="parent"

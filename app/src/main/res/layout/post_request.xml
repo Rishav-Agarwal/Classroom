@@ -4,58 +4,67 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="8dp"
+    android:layout_marginBottom="4dp"
+    android:layout_marginEnd="8dp"
+    android:layout_marginStart="8dp"
+    android:layout_marginTop="4dp"
     android:foreground="?android:attr/selectableItemBackground"
-    app:cardBackgroundColor="#424242"
-    app:cardCornerRadius="4dp">
+    app:cardBackgroundColor="@color/cardBackground"
+    app:cardCornerRadius="4dp"
+    app:cardElevation="2dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="6dp">
+        android:paddingBottom="4dp"
+        android:paddingEnd="8dp"
+        android:paddingStart="8dp"
+        android:paddingTop="4dp">
 
         <TextView
             android:id="@+id/tv_post_request_sender_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="#607D8B"
+            android:textColor="@color/postSender"
             android:textSize="14sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            tools:text="Rishav Agarwal" />
 
         <TextView
             android:id="@+id/tv_post_request_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:textColor="#ffffff"
             android:textSize="16sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            tools:text="Title" />
 
         <LinearLayout
             android:id="@+id/ll_file"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
             android:background="@drawable/post_file"
             android:foreground="?attr/selectableItemBackground"
             android:orientation="horizontal"
-            android:visibility="gone">
+            android:visibility="visible">
 
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:contentDescription="@string/contains_a_file"
-                android:src="@drawable/file" />
+                android:src="@drawable/attach_file" />
 
             <TextView
                 android:id="@+id/tv_file_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="8dp"
+                android:layout_margin="4dp"
                 android:gravity="center"
                 android:padding="4dp"
-                tools:text="app-release.apk" />
+                tools:text="classroom.apk" />
         </LinearLayout>
 
         <TextView
@@ -63,21 +72,23 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:autoLink="all"
-            android:textColor="#ffffff"
-            android:textSize="16sp" />
+            android:textSize="16sp"
+            tools:text="Description" />
 
         <TextView
             android:id="@+id/tv_post_request_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end"
-            android:textColor="#607D8B"
-            android:textSize="12sp" />
+            android:textColor="@color/postTime"
+            android:textSize="12sp"
+            tools:text="30 Feb, 2019" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
+            android:gravity="center"
             android:orientation="horizontal">
 
             <ImageView
@@ -85,9 +96,7 @@
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:layout_marginEnd="8dp"
-                android:layout_marginRight="8dp"
-                android:layout_weight="1"
-                android:background="@drawable/transparent_black_back"
+                android:contentDescription="@string/accept_post_req"
                 android:foreground="?attr/selectableItemBackground"
                 android:src="@drawable/accept" />
 
@@ -95,10 +104,8 @@
                 android:id="@+id/iv_post_request_reject"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
-                android:layout_marginLeft="8dp"
                 android:layout_marginStart="8dp"
-                android:layout_weight="1"
-                android:background="@drawable/transparent_black_back"
+                android:contentDescription="@string/decline_post_req"
                 android:foreground="?attr/selectableItemBackground"
                 android:src="@drawable/reject" />
         </LinearLayout>

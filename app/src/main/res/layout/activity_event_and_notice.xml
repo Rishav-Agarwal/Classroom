@@ -16,7 +16,7 @@
             android:layout_height="match_parent"
             android:gravity="center_vertical"
             android:text="Posts"
-            android:textColor="@color/colorAccent"
+            android:textColor="@color/toolbarContentColor"
             android:textSize="20sp" />
 
     </android.support.v7.widget.Toolbar>
@@ -26,7 +26,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_margin="10dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="4dp"
         android:background="@drawable/post_send_back"
         android:orientation="horizontal"
         android:padding="8dp">
@@ -38,10 +41,11 @@
             android:layout_gravity="center"
             android:layout_weight="1"
             android:background="@null"
+            android:hint="@string/write_a_message"
             android:inputType="textMultiLine|textCapSentences"
             android:maxLines="4"
             android:minLines="1"
-            android:textColor="#ffffff" />
+            tools:text="Sample post" />
 
         <ImageView
             android:id="@+id/iv_attach_post"
@@ -71,8 +75,8 @@
         android:layout_above="@id/frame_selectedFile"
         android:layout_below="@id/post_toolbar"
         android:divider="#00ffffff"
-        android:dividerHeight="10dp"
-        android:padding="10dp"
+        android:dividerHeight="8dp"
+        android:padding="8dp"
         android:stackFromBottom="true"
         android:transcriptMode="normal">
 
@@ -83,8 +87,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@id/rl_send"
-        android:layout_marginEnd="10dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginStart="10dp" />
+        android:layout_marginEnd="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginStart="8dp" />
 </RelativeLayout>

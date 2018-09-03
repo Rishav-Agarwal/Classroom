@@ -46,7 +46,7 @@ public class ClassroomMessagingService extends FirebaseMessagingService {
         //Get data message into `Map`
         Map<String, String> map = remoteMessage.getData();
 
-        //Loging the received data
+        //Logging the received data
         Log.d("Data received", map.toString());
 
         /*

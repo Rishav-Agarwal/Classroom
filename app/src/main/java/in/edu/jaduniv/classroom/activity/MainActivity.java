@@ -298,7 +298,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void loadNavigationHeader() throws IllegalAccessException {
-        GlideApp.with(this).load("https://i.ytimg.com/vi/C5wBkVrZAbo/maxresdefault.jpg").diskCacheStrategy(DiskCacheStrategy.ALL).into(ivNavHeaderBackground);
+        GlideApp.with(this).load("https://atgbcentral.com/data/out/193/5690319-material-wallpaper.png").diskCacheStrategy(DiskCacheStrategy.ALL).into(ivNavHeaderBackground);
         //When connected with firebase, load user data into navigation header
         referenceUsers.child(CurrentUser.getInstance().getPhone()).addChildEventListener(new ChildEventListener() {
             @Override
@@ -453,13 +453,13 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onDrawerClosed(View drawerView) {
-                // Code here will be triggered once the drawer closes as we dont want anything to happen so we leave this blank
+                // Code here will be triggered once the drawer closes as we don't want anything to happen so we leave this blank
                 super.onDrawerClosed(drawerView);
             }
 
             @Override
             public void onDrawerOpened(View drawerView) {
-                // Code here will be triggered once the drawer open as we dont want anything to happen so we leave this blank
+                // Code here will be triggered once the drawer open as we don't want anything to happen so we leave this blank
                 super.onDrawerOpened(drawerView);
             }
         };

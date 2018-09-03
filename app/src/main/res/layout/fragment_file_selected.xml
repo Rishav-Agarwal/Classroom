@@ -12,14 +12,14 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/iv_remove_file"
         android:layout_centerInParent="true"
-        android:background="#424242"
+        android:background="@color/cardBackground"
         android:orientation="horizontal">
 
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:src="@drawable/file" />
+            android:src="@drawable/attach_file" />
 
         <TextView
             android:id="@+id/tv_file_name"
@@ -28,7 +28,7 @@
             android:layout_margin="8dp"
             android:gravity="center"
             android:padding="4dp"
-            tools:text="app-release.apk" />
+            tools:text="classroom.apk" />
     </LinearLayout>
 
     <ImageView
@@ -36,7 +36,6 @@
         android:layout_width="16dp"
         android:layout_height="16dp"
         android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
         android:contentDescription="@string/remove_file"
         android:foreground="?attr/selectableItemBackground"
         android:src="@android:drawable/ic_menu_close_clear_cancel" />

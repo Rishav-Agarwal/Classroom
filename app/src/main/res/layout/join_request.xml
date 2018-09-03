@@ -8,9 +8,9 @@
     android:clickable="true"
     android:focusable="true"
     android:foreground="?android:attr/selectableItemBackground"
-    app:cardBackgroundColor="#616161"
+    app:cardBackgroundColor="@color/cardBackground"
     app:cardCornerRadius="4dp"
-    app:cardElevation="4dp">
+    app:cardElevation="2dp">
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="wrap_content"
@@ -22,7 +22,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:contentDescription="@string/app_icon"
-            android:src="@mipmap/ic_launcher_round"
+            android:src="@drawable/student"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
 

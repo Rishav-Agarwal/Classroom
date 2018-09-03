@@ -16,7 +16,7 @@
             android:layout_height="match_parent"
             android:gravity="center_vertical"
             android:text="@string/syllabus"
-            android:textColor="@color/colorAccent"
+            android:textColor="@color/toolbarContentColor"
             android:textSize="20sp" />
     </android.support.v7.widget.Toolbar>
 

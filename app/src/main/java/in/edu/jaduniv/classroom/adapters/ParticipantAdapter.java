@@ -5,12 +5,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import java.util.ArrayList;
 
 import in.edu.jaduniv.classroom.R;
 import in.edu.jaduniv.classroom.object.Participant;
+import in.edu.jaduniv.classroom.other.GlideApp;
 
 public class ParticipantAdapter extends BaseAdapter {
 
@@ -45,9 +49,10 @@ public class ParticipantAdapter extends BaseAdapter {
 
         Participant participant = getItem(i);
 
-        TextView tvName = (TextView) view.findViewById(R.id.tv_participant_name);
-        TextView tvPhone = (TextView) view.findViewById(R.id.tv_participant_phone);
-        TextView tvAdmin = (TextView) view.findViewById(R.id.tv_admin);
+        TextView tvName = view.findViewById(R.id.tv_participant_name);
+        TextView tvPhone = view.findViewById(R.id.tv_participant_phone);
+        TextView tvAdmin = view.findViewById(R.id.tv_admin);
+        ImageView ivProfilePic = view.findViewById(R.id.iv_participant_profile_pic);
 
         tvName.setText(participant.getName());
         tvPhone.setText(participant.getPhone());
@@ -55,6 +60,7 @@ public class ParticipantAdapter extends BaseAdapter {
             tvAdmin.setVisibility(View.VISIBLE);
         else
             tvAdmin.setVisibility(View.GONE);
+        GlideApp.with(context).load(context.getResources().getDrawable(R.drawable.student)).diskCacheStrategy(DiskCacheStrategy.ALL).into(ivProfilePic);
 
         return view;
     }

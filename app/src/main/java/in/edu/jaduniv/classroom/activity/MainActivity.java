@@ -243,7 +243,7 @@ public class MainActivity extends AppCompatActivity {
         if (requestCode == PERMISSION_STORAGE && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             //Do nothing and continue;
         } else {
-            Toast.makeText(this, "Storage permission denied", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Storage permission denied! :(\nWe need your consent to do that.", Toast.LENGTH_SHORT).show();
             finish();
         }
     }
@@ -500,8 +500,11 @@ public class MainActivity extends AppCompatActivity {
                                 referenceJoinReq.child(phone).addListenerForSingleValueEvent(new ValueEventListener() {
                                     @Override
                                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                        if (!dataSnapshot.exists())
+                                        if (!dataSnapshot.exists()) {
                                             referenceJoinReq.child(phone).setValue(joinRequest);
+                                            Toast.makeText(MainActivity.this, "Join request sent!\nYou will soon be a part of an awesome group \uD83D\uDE0E", Toast.LENGTH_SHORT).show();
+                                        } else
+                                            Toast.makeText(MainActivity.this, "You are already a part of the awesome group \uD83D\uDE0E", Toast.LENGTH_SHORT).show();
                                     }
 
                                     @Override
@@ -509,7 +512,8 @@ public class MainActivity extends AppCompatActivity {
 
                                     }
                                 });
-                            }
+                            } else
+                                Toast.makeText(MainActivity.this, "You are already a part of the awesome group \uD83D\uDE0E", Toast.LENGTH_SHORT).show();
                         }
 
                         @Override
@@ -593,7 +597,6 @@ public class MainActivity extends AppCompatActivity {
                 });
                 joinCreateBuilder.show();
                 break;*/
-                Toast.makeText(this, "This feature is coming soon", Toast.LENGTH_SHORT).show();
                 break;
         }
         return super.onOptionsItemSelected(item);

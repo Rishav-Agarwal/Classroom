@@ -43,4 +43,7 @@
     <string name="accept_post_req">Accept post request</string>
     <string name="decline_post_req">Decline post request</string>
 
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="nothing_here">Nothing here!</string>
+
 </resources>

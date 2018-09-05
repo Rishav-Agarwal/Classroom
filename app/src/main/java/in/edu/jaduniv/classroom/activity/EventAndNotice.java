@@ -45,25 +45,25 @@ import in.edu.jaduniv.classroom.utility.FirebaseUtils;
 import in.edu.jaduniv.classroom.utility.PermissionUtils;
 
 public class EventAndNotice extends AppCompatActivity {
+
     private static final int RC_CHOOSE_FILE = 1000;
     public static String attachedUri = null;
     public static FileUploadService.OnUploadCompleteListener listener;
     private static EventAndNotice eventAndNotice = null;
 
-    //Listview which contains the posts
+    //ListView which contains the posts
     ListView lvPosts;
-    //Adapter for the listview
+    //Adapter for the ListView `lvPosts`
     PostAdapter postArrayAdapter;
     ArrayList<Post> postArrayList;
     ArrayList<String> postKeys;
     //Support action bar
     android.support.v7.widget.Toolbar toolbar;
 
-    //Edittext which sends the message
+    //EditText which sends the message
     EditText etSendPost;
     ImageView ivSendPost, ivSendFile;
 
-    FirebaseDatabase mDatabase;
     DatabaseReference mPostReference;
     FirebaseAuth.AuthStateListener authStateListener = null;
     //Contains class code (not name)
@@ -229,7 +229,6 @@ public class EventAndNotice extends AppCompatActivity {
             actionBar.setHomeAsUpIndicator(R.drawable.up_button);
         }
 
-        mDatabase = FirebaseUtils.getDatabase();
         mPostReference = FirebaseUtils.getDatabaseReference().child("classes").child(classCode).child("posts");
 
         etSendPost = findViewById(R.id.et_send_post);

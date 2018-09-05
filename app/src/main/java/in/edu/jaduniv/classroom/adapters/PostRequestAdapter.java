@@ -356,7 +356,7 @@ public class PostRequestAdapter extends RecyclerView.Adapter<PostRequestAdapter.
         void onRecyclerViewPopulated();
     }
 
-    static class PostRequestViewHolder extends RecyclerView.ViewHolder {
+    static final class PostRequestViewHolder extends RecyclerView.ViewHolder {
 
         TextView tvSenderName, tvTitle, tvDescription, tvTime;
         ImageView ivAccept, ivReject;

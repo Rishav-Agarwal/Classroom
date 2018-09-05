@@ -88,6 +88,11 @@
             android:name=".activity.Syllabus"
             android:launchMode="singleTop"
             android:parentActivityName=".activity.MainActivity" />
+
+        <activity
+            android:name=".activity.Routine"
+            android:launchMode="singleTop"
+            android:parentActivityName=".activity.MainActivity" />
     </application>
 
 </manifest>

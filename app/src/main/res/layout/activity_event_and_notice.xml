@@ -75,7 +75,7 @@
         android:layout_above="@id/frame_selectedFile"
         android:layout_below="@id/post_toolbar"
         android:divider="#00ffffff"
-        android:dividerHeight="8dp"
+        android:dividerHeight="12dp"
         android:padding="8dp"
         android:stackFromBottom="true"
         android:transcriptMode="normal">

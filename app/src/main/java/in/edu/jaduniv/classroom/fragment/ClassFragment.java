@@ -18,6 +18,7 @@ import android.widget.Toast;
 
 import in.edu.jaduniv.classroom.R;
 import in.edu.jaduniv.classroom.activity.EventAndNotice;
+import in.edu.jaduniv.classroom.activity.Routine;
 import in.edu.jaduniv.classroom.activity.Syllabus;
 import in.edu.jaduniv.classroom.adapters.ClassAdapter;
 
@@ -33,7 +34,7 @@ public class ClassFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        classCode = getArguments().getString("class");
+        classCode = getArguments() != null ? getArguments().getString("class") : null;
         return inflater.inflate(R.layout.fragment_class, container, false);
     }
 
@@ -57,8 +58,9 @@ public class ClassFragment extends Fragment {
                         startActivity(intent);
                         break;
                     case 1:
-                        //TODO: Implement Routine activity
-                        Toast.makeText(getContext(), "This feature is not yet available!", Toast.LENGTH_SHORT).show();
+                        intent = new Intent(getActivity(), Routine.class);
+                        intent.putExtra("class", classCode);
+                        startActivity(intent);
                         break;
                     case 2:
                         //TODO: Implement Notes activity

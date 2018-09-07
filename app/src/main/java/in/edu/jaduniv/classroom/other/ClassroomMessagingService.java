@@ -1,12 +1,14 @@
 package in.edu.jaduniv.classroom.other;
 
 import android.app.ActivityManager;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
@@ -124,8 +126,22 @@ public class ClassroomMessagingService extends FirebaseMessagingService {
                         builder.setContentTitle(postPostedByName);
                     }
 
-                    //Send the notification
+                    //Get the notification manager
                     NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+
+                    //Create notification channel for android oreo and above
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                        NotificationChannel channel = new NotificationChannel(postClassCode, postClassName, NotificationManager.IMPORTANCE_HIGH);
+                        channel.enableLights(true);
+                        channel.setLightColor(Color.RED);
+                        channel.enableVibration(true);
+                        builder.setChannelId(postClassCode);
+                        if (nm != null) {
+                            nm.createNotificationChannel(channel);
+                        }
+                    }
+
+                    //Send the notification
                     if (nm != null) {
                         nm.notify((int) Long.parseLong(postId), builder.build());
                     }
@@ -206,8 +222,22 @@ public class ClassroomMessagingService extends FirebaseMessagingService {
                         builder.setContentTitle(postPostedByName);
                     }
 
-                    //Send the notification
+                    //Get the notification manager
                     NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+
+                    //Create notification channel for android oreo and above
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                        NotificationChannel channel = new NotificationChannel(postClassCode, postClassName, NotificationManager.IMPORTANCE_HIGH);
+                        channel.enableLights(true);
+                        channel.setLightColor(Color.RED);
+                        channel.enableVibration(true);
+                        builder.setChannelId(postClassCode);
+                        if (nm != null) {
+                            nm.createNotificationChannel(channel);
+                        }
+                    }
+
+                    //Send the notification
                     if (nm != null) {
                         nm.notify((int) Long.parseLong(postId), builder.build());
                     }
@@ -232,6 +262,7 @@ public class ClassroomMessagingService extends FirebaseMessagingService {
 
                 //If app is not in foreground, send notification, otherwise just show a Toast message for new content
                 if (isAppIsInBackground(getApplicationContext())) {
+                    Log.d("JOIN REQ", "App in backgroud");
                     //Get post details
                     String joinClassCode = map.get("class_code");
                     String joinName = map.get("name");
@@ -250,7 +281,7 @@ public class ClassroomMessagingService extends FirebaseMessagingService {
                     PendingIntent pendingIntent = stackBuilder.getPendingIntent(1000, PendingIntent.FLAG_UPDATE_CURRENT);
 
                     //Build the notification
-                    NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), joinClassName)
+                    NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), joinClassCode)
                             .setGroup(joinClassName)
                             .setSmallIcon(R.drawable.classroom_notification)
                             .setContentIntent(pendingIntent)
@@ -265,9 +296,26 @@ public class ClassroomMessagingService extends FirebaseMessagingService {
                             .setContentText(joinName + " has requested to join " + joinClassName).setSubText(joinClassName)
                             .setContentTitle(joinName);
 
-                    //Send the notification
+                    //Get the notification manager
                     NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+
+                    //Create notification channel for android oreo and above
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                        NotificationChannel channel = new NotificationChannel(joinClassCode, joinClassName, NotificationManager.IMPORTANCE_HIGH);
+                        channel.enableLights(true);
+                        channel.setLightColor(Color.RED);
+                        channel.enableVibration(true);
+                        builder.setChannelId(joinClassCode);
+                        if (nm != null) {
+                            nm.createNotificationChannel(channel);
+                        }
+                    }
+
+                    //Send the notification
+                    Log.d("Notification Manager?", String.valueOf(nm));
                     if (nm != null) {
+                        Log.d("Notification builder", builder.toString());
+                        Log.d("Notification build", builder.build().toString());
                         nm.notify((int) System.currentTimeMillis(), builder.build());
                     }
                 } else {
@@ -314,6 +362,7 @@ public class ClassroomMessagingService extends FirebaseMessagingService {
             }
         }
 
+        Log.d("Background", String.valueOf(isInBackground));
         return isInBackground;
     }
 }

@@ -12,11 +12,32 @@ A simple android app for students to keep all the important classroom stuffs at 
 ##### CloudinaryUtils.java
 
 ```java
+/**
+ * A Singleton class for {@link Cloudinary} and its utilities
+ */
 public final class CloudinaryUtils {
-    public static final String ACTION_FILE_UPLOAD = "upload_file";
+
+    /**
+     * String for post upload action
+     */
+    public static final String ACTION_POST_UPLOAD = "upload_post_file";
+
+    /**
+     * A static {@link Cloudinary} object. Initialized only once when first called.
+     */
     private static Cloudinary cloudinary = null;
+
+    /**
+     * Configuration for our Cloudinary cloud
+     */
     private static Map<String, String> cloudinaryConfig = null;
 
+    /**
+     * Returns an instance of {@link Cloudinary}.
+     * If it is `null`, create an instance otherwise ust return already created one.
+     *
+     * @return A single instance of {@link Cloudinary}
+     */
     public static Cloudinary getInstance() {
         if (cloudinary == null) {
             cloudinary = new Cloudinary();
@@ -24,12 +45,17 @@ public final class CloudinaryUtils {
         return cloudinary;
     }
 
+    /**
+     * Gets the configuration for our Cloudinary cloud
+     *
+     * @return A {@link Map} having the configuration fo our Cloudinary cloud
+     */
     public static Map<String, String> getCloudinaryConfig() {
         if (cloudinaryConfig == null) {
             cloudinaryConfig = new HashMap<>();
-            cloudinaryConfig.put("cloud_name", <your_cloudinary_cloud_name>);
-            cloudinaryConfig.put("api_key", <your_cloudinary_api_key>);
-            cloudinaryConfig.put("api_secret", <your_cloudinary_api_secret>);
+            cloudinaryConfig.put("cloud_name", <CLOUDINARY_CLOUD_NAME>);
+            cloudinaryConfig.put("api_key", <CLOUDINARY_API_KEY>);
+            cloudinaryConfig.put("api_secret", <CLOUDINARY_API_SECRET>);
             cloudinaryConfig.put("resource_type", "auto");
         }
         return cloudinaryConfig;

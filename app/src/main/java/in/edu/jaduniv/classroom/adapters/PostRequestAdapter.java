@@ -40,7 +40,7 @@ import java.util.Map;
 
 import in.edu.jaduniv.classroom.R;
 import in.edu.jaduniv.classroom.object.Post;
-import in.edu.jaduniv.classroom.other.DownloadDbHelper;
+import in.edu.jaduniv.classroom.helper.DownloadDbHelper;
 import in.edu.jaduniv.classroom.utility.CloudinaryUtils;
 import in.edu.jaduniv.classroom.utility.FirebaseUtils;
 

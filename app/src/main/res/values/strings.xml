@@ -32,7 +32,6 @@
     <string name="attach_file">Attach file</string>
     <string name="syllabus">Syllabus</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="remove_file">Remove file</string>
     <string name="re_download">Download</string>
     <string name="contains_a_file">Contains a file</string>
@@ -43,7 +42,8 @@
     <string name="accept_post_req">Accept post request</string>
     <string name="decline_post_req">Decline post request</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="nothing_here">Nothing here!</string>
+
+    <string name="file_upload_service_desc">This service is used to upload files to the server.</string>
 
 </resources>

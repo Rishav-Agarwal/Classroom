@@ -21,7 +21,6 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -29,7 +28,6 @@ import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -37,9 +35,10 @@ import java.util.ArrayList;
 import in.edu.jaduniv.classroom.R;
 import in.edu.jaduniv.classroom.adapters.PostAdapter;
 import in.edu.jaduniv.classroom.fragment.FileSelectedFragment;
+import in.edu.jaduniv.classroom.helper.FileUploadHelper;
+import in.edu.jaduniv.classroom.interfaces.OnCompleteListener;
 import in.edu.jaduniv.classroom.object.CurrentUser;
 import in.edu.jaduniv.classroom.object.Post;
-import in.edu.jaduniv.classroom.other.FileUploadService;
 import in.edu.jaduniv.classroom.utility.CloudinaryUtils;
 import in.edu.jaduniv.classroom.utility.FirebaseUtils;
 import in.edu.jaduniv.classroom.utility.PermissionUtils;
@@ -48,7 +47,7 @@ public class EventAndNotice extends AppCompatActivity {
 
     private static final int RC_CHOOSE_FILE = 1000;
     public static String attachedUri = null;
-    public static FileUploadService.OnUploadCompleteListener listener;
+    public static OnCompleteListener listener;
     private static EventAndNotice eventAndNotice = null;
 
     //ListView which contains the posts
@@ -135,61 +134,6 @@ public class EventAndNotice extends AppCompatActivity {
         if (requestCode == PermissionUtils.WRITE_EXTERNAL_STORAGE) {
             if (grantResults[0] != PackageManager.PERMISSION_GRANTED) {
                 Toast.makeText(this, "Permission denied! :(\nWe need your consent to do that.", Toast.LENGTH_SHORT).show();
-
-                //WHEN PERMISSION GRANTED - NOT REQUIRED NOW [MIGHT BE REMOVED TOTALLY]
-                /*
-                String strPost = etSendPost.getText().toString().trim();
-                String fileName;
-                try {
-                    fileName = new File(Uri.parse(attachedUri).getPath()).getName();
-                } catch (NullPointerException npe) {
-                    fileName = "";
-                }
-                etSendPost.setText("");
-                Intent fileUploadService = new Intent(EventAndNotice.this, FileUploadService.class);
-                try {
-                    fileUploadService.setAction(CloudinaryUtils.ACTION_FILE_UPLOAD);
-                    fileUploadService.putExtra("title", "");
-                    fileUploadService.putExtra("content", strPost);
-                    fileUploadService.putExtra("pinned", false);
-                    fileUploadService.putExtra("phone", CurrentUser.getInstance().getPhone());
-                    fileUploadService.putExtra("name", CurrentUser.getInstance().getName());
-                    fileUploadService.putExtra("longTime", 0L);
-                    fileUploadService.putExtra("uri", attachedUri);
-                    fileUploadService.putExtra("fileName", fileName);
-                    fileUploadService.putExtra("classCode", classCode);
-                    listener = new FileUploadService.OnUploadCompleteListener() {
-                        @Override
-                        public void onUploadCompleted(Post post) {
-                            if (adminState.isAdmin()) {
-                                FirebaseUtils.getDatabaseReference().child("classes").child(classCode).child("posts").push().setValue(post);
-                            } else {
-                                FirebaseUtils.getDatabaseReference().child("classes").child(classCode).child("post_req").push().setValue(post).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<Void> task) {
-                                        Toast.makeText(getApplicationContext(), "Post request sent!", Toast.LENGTH_SHORT).show();
-                                    }
-                                });
-                            }
-                        }
-                    };
-                } catch (IllegalAccessException e) {
-                    Log.e("User not defined", "Probably user is not signed in");
-                }
-
-                startService(fileUploadService);
-                if (sendFragment != null) {
-                    FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-                    fragmentTransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
-                    fragmentTransaction.remove(sendFragment);
-                    fragmentTransaction.commitAllowingStateLoss();
-                }
-                setSendFragment(null);
-                attachedUri = null;
-            } else {
-                Toast.makeText(this, "Permission denied\nCan't send message", Toast.LENGTH_SHORT).show();
-            }
-            */
             }
         }
     }
@@ -264,25 +208,27 @@ public class EventAndNotice extends AppCompatActivity {
                             fileName = "";
                         }
                         etSendPost.setText("");
-                        Intent fileUploadService = new Intent(EventAndNotice.this, FileUploadService.class);
+                        Intent fileUploadService = new Intent(EventAndNotice.this, FileUploadHelper.class);
                         try {
-                            fileUploadService.setAction(CloudinaryUtils.ACTION_FILE_UPLOAD);
-                            fileUploadService.putExtra("title", "");
-                            fileUploadService.putExtra("content", strPost);
-                            fileUploadService.putExtra("pinned", false);
-                            fileUploadService.putExtra("phone", CurrentUser.getInstance().getPhone());
-                            fileUploadService.putExtra("name", CurrentUser.getInstance().getName());
-                            fileUploadService.putExtra("longTime", 0L);
-                            fileUploadService.putExtra("uri", attachedUri);
-                            fileUploadService.putExtra("fileName", fileName);
-                            fileUploadService.putExtra("classCode", classCode);
-                            listener = new FileUploadService.OnUploadCompleteListener() {
+                            fileUploadService.setAction(CloudinaryUtils.ACTION_POST_UPLOAD);
+                            Bundle fileUploadBundle = new Bundle();
+                            fileUploadBundle.putString("title", "");
+                            fileUploadBundle.putString("content", strPost);
+                            fileUploadBundle.putBoolean("pinned", false);
+                            fileUploadBundle.putString("phone", CurrentUser.getInstance().getPhone());
+                            fileUploadBundle.putString("name", CurrentUser.getInstance().getName());
+                            fileUploadBundle.putLong("longTime", 0L);
+                            fileUploadBundle.putString("uri", attachedUri);
+                            fileUploadBundle.putString("fileName", fileName);
+                            fileUploadBundle.putString("classCode", classCode);
+                            listener = new OnCompleteListener() {
                                 @Override
                                 public void onUploadCompleted(Post post) {
+                                    Log.d("Post", post.toString());
                                     if (adminState.isAdmin()) {
                                         FirebaseUtils.getDatabaseReference().child("classes").child(classCode).child("posts").push().setValue(post);
                                     } else {
-                                        FirebaseUtils.getDatabaseReference().child("classes").child(classCode).child("post_req").push().setValue(post).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        FirebaseUtils.getDatabaseReference().child("classes").child(classCode).child("post_req").push().setValue(post).addOnCompleteListener(new com.google.android.gms.tasks.OnCompleteListener<Void>() {
                                             @Override
                                             public void onComplete(@NonNull Task<Void> task) {
                                                 Toast.makeText(getApplicationContext(), "Post request sent!", Toast.LENGTH_SHORT).show();
@@ -291,6 +237,7 @@ public class EventAndNotice extends AppCompatActivity {
                                     }
                                 }
                             };
+                            fileUploadService.putExtra("uploadData", fileUploadBundle);
                         } catch (IllegalAccessException e) {
                             Log.e("User not defined", "Probably user is not signed in");
                         }

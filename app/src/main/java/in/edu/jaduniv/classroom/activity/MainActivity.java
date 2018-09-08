@@ -264,7 +264,6 @@ public class MainActivity extends AppCompatActivity {
             classes.getItem(i).setChecked(false);
         classes.getItem(navItemSelectedIndex).setChecked(true);
 
-        //TODO: Set toolbar title
         getSupportActionBar().setTitle(classes.getItem(navItemSelectedIndex).getTitle());
 
         //If user selects the opened class again, just close the drawer (don't do anything)

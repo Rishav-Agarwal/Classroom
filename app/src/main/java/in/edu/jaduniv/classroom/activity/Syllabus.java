@@ -40,7 +40,7 @@ import java.util.ArrayList;
 
 import in.edu.jaduniv.classroom.R;
 import in.edu.jaduniv.classroom.adapters.SyllabusAdapter;
-import in.edu.jaduniv.classroom.other.DownloadDbHelper;
+import in.edu.jaduniv.classroom.helper.DownloadDbHelper;
 import in.edu.jaduniv.classroom.utility.FirebaseUtils;
 import in.edu.jaduniv.classroom.utility.PermissionUtils;
 

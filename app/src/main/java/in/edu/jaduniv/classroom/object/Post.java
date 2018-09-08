@@ -120,4 +120,12 @@ public class Post {
     public void setPublicId(String publicId) {
         this.publicId = publicId;
     }
+
+    @Override
+    public String toString() {
+        return "Post[" + hashCode() + "]: "
+                + title + " ~ " + description
+                + " :: posted by [" + postedByName + ", " + postedByNumber + "]"
+                + "file?: " + fileName;
+    }
 }

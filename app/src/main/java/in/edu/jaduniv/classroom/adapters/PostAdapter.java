@@ -31,7 +31,7 @@ import java.util.Date;
 
 import in.edu.jaduniv.classroom.R;
 import in.edu.jaduniv.classroom.object.Post;
-import in.edu.jaduniv.classroom.other.DownloadDbHelper;
+import in.edu.jaduniv.classroom.helper.DownloadDbHelper;
 import in.edu.jaduniv.classroom.utility.PermissionUtils;
 
 public class PostAdapter extends ArrayAdapter<Post> {

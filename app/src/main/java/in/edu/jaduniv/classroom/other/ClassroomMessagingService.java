@@ -76,6 +76,7 @@ public class ClassroomMessagingService extends FirebaseMessagingService {
                     String postTitle = map.get("post_title");
                     String postDescription = map.get("post_description");
                     String postPostedByName = map.get("post_postedByName");
+                    String postFileName = map.get("post_file_name");
 
                     //If their was no title set for the post, set it to nothing("")
                     if (postTitle == null || postTitle.equals("undefined"))
@@ -83,6 +84,9 @@ public class ClassroomMessagingService extends FirebaseMessagingService {
                     //If their was no description(in case of attached file) for the post, set it to nothing("")
                     if (postDescription == null || postDescription.equals("undefined"))
                         postDescription = "";
+                    //If a file is attached, append it to description
+                    if (postFileName != null && !postFileName.startsWith("null") && !postFileName.startsWith("undefined"))
+                        postDescription = "📎  " + postFileName + "\n" + postDescription;
 
                     //Create intent for notification click. Posts activity should open.
                     Intent postIntent = new Intent(getApplicationContext(), EventAndNotice.class);
@@ -113,6 +117,7 @@ public class ClassroomMessagingService extends FirebaseMessagingService {
                             .setDefaults(NotificationCompat.DEFAULT_ALL)
                             .setColor(ContextCompat.getColor(getApplicationContext(), R.color.colorAccent))
                             //Notification's contents(text)
+                            .setStyle(new NotificationCompat.BigTextStyle().bigText(postDescription))
                             .setContentText(postDescription)
                             .setSubText(postClassName);
                     /*
@@ -172,6 +177,7 @@ public class ClassroomMessagingService extends FirebaseMessagingService {
                     String postTitle = map.get("post_title");
                     String postDescription = map.get("post_description");
                     String postPostedByName = map.get("post_postedByName");
+                    String postFileName = map.get("post_file_name");
 
                     //If their was no title set for the post, set it to nothing("")
                     if (postTitle == null || postTitle.equals("undefined"))
@@ -179,6 +185,9 @@ public class ClassroomMessagingService extends FirebaseMessagingService {
                     //If their was no description(in case of attached file) for the post, set it to nothing("")
                     if (postDescription == null || postDescription.equals("undefined"))
                         postDescription = "";
+                    //If a file is attached, append it to description
+                    if (postFileName != null && !postFileName.startsWith("null") && !postFileName.startsWith("undefined"))
+                        postDescription = "📎  " + postFileName + "\n" + postDescription;
                     //Prepend `(New post request)` to description to specify that it is a request
                     postDescription = "(New post request)\n" + postDescription;
 
@@ -262,7 +271,7 @@ public class ClassroomMessagingService extends FirebaseMessagingService {
 
                 //If app is not in foreground, send notification, otherwise just show a Toast message for new content
                 if (isAppIsInBackground(getApplicationContext())) {
-                    Log.d("JOIN REQ", "App in backgroud");
+                    Log.d("JOIN REQ", "App in background");
                     //Get post details
                     String joinClassCode = map.get("class_code");
                     String joinName = map.get("name");

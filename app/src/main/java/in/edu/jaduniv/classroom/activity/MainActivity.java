@@ -29,6 +29,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
@@ -75,6 +76,7 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<String> classFragmentTag;
     String navItemSelectedTag = "-1";
     private FirebaseAuth.AuthStateListener authStateListener = null;
+    private FirebaseAnalytics analytics = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -190,16 +192,34 @@ public class MainActivity extends AppCompatActivity {
         firebaseDatabase = FirebaseUtils.getDatabase();
         referenceClasses = FirebaseUtils.getDatabaseReference().child("classes");
         referenceUsers = FirebaseUtils.getDatabaseReference().child("users");
+        analytics = FirebaseAnalytics.getInstance(this);
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        Bundle bundle = new Bundle();
+        bundle.putString(FirebaseAnalytics.Param.METHOD, "Phone");
+        bundle.putInt("request_code", requestCode);
+        bundle.putInt("result_code", resultCode);
+        analytics.logEvent(FirebaseAnalytics.Event.LOGIN, bundle);
         if (requestCode == RC_SIGN_IN) {
             if (resultCode == RESULT_CANCELED) {
                 finish();
             } else if (resultCode == RESULT_OK) {
                 try {
+                    bundle = new Bundle();
+                    bundle.putString(FirebaseAnalytics.Param.METHOD, "Phone");
+                    try {
+                        bundle.putString("name", CurrentUser.getInstance().getName());
+                        bundle.putString("email", CurrentUser.getInstance().getEmail());
+                        bundle.putString("phone", CurrentUser.getInstance().getPhone());
+                        bundle.putString("uid", CurrentUser.getInstance().getUid());
+                    } catch (IllegalAccessException e) {
+                        bundle.putString("error", e.getMessage());
+                    } finally {
+                        analytics.logEvent(FirebaseAnalytics.Event.LOGIN, bundle);
+                    }
                     //TODO: Update code for token
                     CurrentUser.getInstance().setToken(FirebaseInstanceId.getInstance().getToken());
                     Map<String, Object> userMap = new HashMap<>();

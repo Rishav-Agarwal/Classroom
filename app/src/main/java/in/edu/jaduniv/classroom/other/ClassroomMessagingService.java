@@ -85,7 +85,7 @@ public class ClassroomMessagingService extends FirebaseMessagingService {
                     if (postDescription == null || postDescription.equals("undefined"))
                         postDescription = "";
                     //If a file is attached, append it to description
-                    if (postFileName != null && !postFileName.startsWith("null") && !postFileName.startsWith("undefined"))
+                    if (postFileName != null && !postFileName.equals("") && !postFileName.startsWith("null") && !postFileName.startsWith("undefined"))
                         postDescription = "📎  " + postFileName + "\n" + postDescription;
 
                     //Create intent for notification click. Posts activity should open.
@@ -186,7 +186,7 @@ public class ClassroomMessagingService extends FirebaseMessagingService {
                     if (postDescription == null || postDescription.equals("undefined"))
                         postDescription = "";
                     //If a file is attached, append it to description
-                    if (postFileName != null && !postFileName.startsWith("null") && !postFileName.startsWith("undefined"))
+                    if (postFileName != null && !postFileName.equals("") && !postFileName.startsWith("null") && !postFileName.startsWith("undefined"))
                         postDescription = "📎  " + postFileName + "\n" + postDescription;
                     //Prepend `(New post request)` to description to specify that it is a request
                     postDescription = "(New post request)\n" + postDescription;

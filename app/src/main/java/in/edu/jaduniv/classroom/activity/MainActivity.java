@@ -320,6 +320,7 @@ public class MainActivity extends AppCompatActivity {
                     fragmentTransaction.replace(R.id.app_main_frame, fragment, navItemSelectedTag);
                     fragmentTransaction.commit();
                 } catch (IllegalStateException e) {
+                    Log.e("Navigation fragment err", e.getMessage());
                     e.printStackTrace();
                 }
             }

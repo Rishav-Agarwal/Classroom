@@ -231,15 +231,29 @@ public class MainActivity extends AppCompatActivity {
                     referenceUsers.child(CurrentUser.getInstance().getPhone()).updateChildren(userMap).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
+                            Bundle bundle = new Bundle();
+                            bundle.putBoolean("Success", task.isSuccessful());
+                            bundle.putBoolean("Cancel", task.isCanceled());
+                            bundle.putBoolean("Complete", task.isComplete());
+                            bundle.putString("Failure", task.getException() == null ? "null" : task.getException().getMessage());
+                            analytics.logEvent("update_user", bundle);
                             try {
                                 loadNavigationHeader();
                                 loadClasses();
                             } catch (IllegalAccessException e) {
+                                bundle = new Bundle();
+                                bundle.putString(FirebaseAnalytics.Param.CHECKOUT_OPTION, "User - 0");
+                                bundle.putString(FirebaseAnalytics.Param.CHECKOUT_STEP, "Not defined");
+                                analytics.logEvent(FirebaseAnalytics.Event.CHECKOUT_PROGRESS, bundle);
                                 Log.e("User not defined", "Probably user is not signed in");
                             }
                         }
                     });
                 } catch (IllegalAccessException e) {
+                    bundle = new Bundle();
+                    bundle.putString(FirebaseAnalytics.Param.CHECKOUT_OPTION, "User - 1");
+                    bundle.putString(FirebaseAnalytics.Param.CHECKOUT_STEP, "Not defined");
+                    analytics.logEvent(FirebaseAnalytics.Event.CHECKOUT_PROGRESS, bundle);
                     Log.e("User not defined", "Probably user is not signed in");
                 }
             }

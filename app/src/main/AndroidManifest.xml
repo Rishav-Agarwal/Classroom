@@ -10,8 +10,8 @@
     <uses-permission android:name="android.permission.GET_TASKS" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <!-- Add FOREGROUND_SERVICE permission when targeting API 28+ -->
 
+    <!-- Add FOREGROUND_SERVICE permission when targeting API 28+ -->
     <application
         android:allowBackup="true"
         android:fullBackupContent="true"
@@ -42,31 +42,15 @@
         </activity>
         <activity
             android:name=".activity.MainActivity"
-            android:launchMode="singleTop">
-            <intent-filter>
-                <action android:name="in.edu.jaduniv.classroom.MAINACTIVITY" />
-            </intent-filter>
-        </activity>
+            android:launchMode="singleTop" />
         <activity
             android:name=".activity.LoginInfoActivity"
-            android:launchMode="singleTop">
-            <intent-filter>
-                <action android:name="in.edu.jaduniv.classroom.LOGININFOACTIVITY" />
-            </intent-filter>
-        </activity>
+            android:launchMode="singleTop" />
         <activity
             android:name=".activity.EventAndNotice"
             android:launchMode="singleTop"
             android:parentActivityName=".activity.MainActivity"
             android:windowSoftInputMode="stateAlwaysHidden" />
-
-        <service
-            android:name=".other.ClassroomMessagingService"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT" />
-            </intent-filter>
-        </service>
 
         <activity
             android:name=".activity.ClassInfo"
@@ -84,6 +68,29 @@
             android:name=".activity.Routine"
             android:launchMode="singleTop"
             android:parentActivityName=".activity.MainActivity" />
+
+        <activity
+            android:name=".activity.SendFileFromOtherApp"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:mimeType="file/*" />
+                <data android:mimeType="image/*" />
+                <data android:mimeType="video/*" />
+                <data android:mimeType="audio/*" />
+                <data android:mimeType="application/*" />
+            </intent-filter>
+        </activity>
+
+        <service
+            android:name=".other.ClassroomMessagingService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
 
         <service
             android:name=".helper.FileUploadHelper"

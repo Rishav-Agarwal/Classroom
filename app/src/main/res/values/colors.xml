@@ -12,4 +12,5 @@
     <color name="hr">@android:color/darker_gray</color>
     <color name="postSender">#607D8B</color>
     <color name="postTime">#607D8B</color>
+    <color name="textDisabledPrimary">#888</color>
 </resources>

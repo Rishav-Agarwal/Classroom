@@ -85,6 +85,18 @@ public class EventAndNotice extends AppCompatActivity {
         Intent intent = getIntent();
         classCode = intent.getStringExtra("class");
 
+        attachedUri = intent.getStringExtra("uri");
+        if (attachedUri != null) {
+            sendFragment = new FileSelectedFragment();
+            Bundle bundle = new Bundle();
+            bundle.putString("uri", attachedUri);
+            sendFragment.setArguments(bundle);
+            FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+            fragmentTransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
+            fragmentTransaction.replace(R.id.frame_selectedFile, sendFragment);
+            fragmentTransaction.commit();
+        }
+
         try {
             initializeVariables();      //Initialize the variables
         } catch (IllegalAccessException e) {
@@ -102,19 +114,15 @@ public class EventAndNotice extends AppCompatActivity {
             authStateListener = new FirebaseAuth.AuthStateListener() {
                 @Override
                 public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                    try {
-                        FirebaseUser firebaseUser = CurrentUser.getFirebaseUser();
-                        if (firebaseUser == null) {
-                            if (isNetworkConnected()) {
-                                Intent loginIntent = new Intent(EventAndNotice.this, LoginInfoActivity.class);
-                                startActivityForResult(loginIntent, LoginInfoActivity.RC_LOGIN_INFO);
-                            } else {
-                                Toast.makeText(getApplicationContext(), "Check your internet connection!", Toast.LENGTH_SHORT).show();
-                                finish();
-                            }
+                    FirebaseUser firebaseUser = CurrentUser.getFirebaseUser();
+                    if (firebaseUser == null) {
+                        if (isNetworkConnected()) {
+                            Intent loginIntent = new Intent(EventAndNotice.this, LoginInfoActivity.class);
+                            startActivityForResult(loginIntent, LoginInfoActivity.RC_LOGIN_INFO);
+                        } else {
+                            Toast.makeText(getApplicationContext(), "Check your internet connection!", Toast.LENGTH_SHORT).show();
+                            finish();
                         }
-                    } catch (IllegalAccessException e) {
-                        Log.e("User not defined", "Probably user is not signed in");
                     }
                 }
             };
@@ -209,38 +217,34 @@ public class EventAndNotice extends AppCompatActivity {
                         }
                         etSendPost.setText("");
                         Intent fileUploadService = new Intent(EventAndNotice.this, FileUploadHelper.class);
-                        try {
-                            fileUploadService.setAction(CloudinaryUtils.ACTION_POST_UPLOAD);
-                            Bundle fileUploadBundle = new Bundle();
-                            fileUploadBundle.putString("title", "");
-                            fileUploadBundle.putString("content", strPost);
-                            fileUploadBundle.putBoolean("pinned", false);
-                            fileUploadBundle.putString("phone", CurrentUser.getInstance().getPhone());
-                            fileUploadBundle.putString("name", CurrentUser.getInstance().getName());
-                            fileUploadBundle.putLong("longTime", 0L);
-                            fileUploadBundle.putString("uri", attachedUri);
-                            fileUploadBundle.putString("fileName", fileName);
-                            fileUploadBundle.putString("classCode", classCode);
-                            listener = new OnCompleteListener() {
-                                @Override
-                                public void onUploadCompleted(Post post) {
-                                    Log.d("Post", post.toString());
-                                    if (adminState.isAdmin()) {
-                                        FirebaseUtils.getDatabaseReference().child("classes").child(classCode).child("posts").push().setValue(post);
-                                    } else {
-                                        FirebaseUtils.getDatabaseReference().child("classes").child(classCode).child("post_req").push().setValue(post).addOnCompleteListener(new com.google.android.gms.tasks.OnCompleteListener<Void>() {
-                                            @Override
-                                            public void onComplete(@NonNull Task<Void> task) {
-                                                Toast.makeText(getApplicationContext(), "Post request sent!", Toast.LENGTH_SHORT).show();
-                                            }
-                                        });
-                                    }
+                        fileUploadService.setAction(CloudinaryUtils.ACTION_POST_UPLOAD);
+                        Bundle fileUploadBundle = new Bundle();
+                        fileUploadBundle.putString("title", "");
+                        fileUploadBundle.putString("content", strPost);
+                        fileUploadBundle.putBoolean("pinned", false);
+                        fileUploadBundle.putString("phone", CurrentUser.getInstance().getPhone());
+                        fileUploadBundle.putString("name", CurrentUser.getInstance().getName());
+                        fileUploadBundle.putLong("longTime", 0L);
+                        fileUploadBundle.putString("uri", attachedUri);
+                        fileUploadBundle.putString("fileName", fileName);
+                        fileUploadBundle.putString("classCode", classCode);
+                        listener = new OnCompleteListener() {
+                            @Override
+                            public void onUploadCompleted(Post post) {
+                                Log.d("Post", post.toString());
+                                if (adminState.isAdmin()) {
+                                    FirebaseUtils.getDatabaseReference().child("classes").child(classCode).child("posts").push().setValue(post);
+                                } else {
+                                    FirebaseUtils.getDatabaseReference().child("classes").child(classCode).child("post_req").push().setValue(post).addOnCompleteListener(new com.google.android.gms.tasks.OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            Toast.makeText(getApplicationContext(), "Post request sent!", Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
                                 }
-                            };
-                            fileUploadService.putExtra("uploadData", fileUploadBundle);
-                        } catch (IllegalAccessException e) {
-                            Log.e("User not defined", "Probably user is not signed in");
-                        }
+                            }
+                        };
+                        fileUploadService.putExtra("uploadData", fileUploadBundle);
 
                         startService(fileUploadService);
                         if (sendFragment != null) {

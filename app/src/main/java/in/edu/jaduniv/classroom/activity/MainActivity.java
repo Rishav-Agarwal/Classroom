@@ -117,22 +117,18 @@ public class MainActivity extends AppCompatActivity {
             authStateListener = new FirebaseAuth.AuthStateListener() {
                 @Override
                 public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                    try {
-                        FirebaseUser firebaseUser = CurrentUser.getFirebaseUser();
-                        if (firebaseUser != null) {
-                            loadNavigationHeader();
-                            loadClasses();
+                    FirebaseUser firebaseUser = CurrentUser.getFirebaseUser();
+                    if (firebaseUser != null) {
+                        loadNavigationHeader();
+                        loadClasses();
+                    } else {
+                        if (isNetworkConnected()) {
+                            Intent loginIntent = new Intent(MainActivity.this, LoginInfoActivity.class);
+                            startActivityForResult(loginIntent, LoginInfoActivity.RC_LOGIN_INFO);
                         } else {
-                            if (isNetworkConnected()) {
-                                Intent loginIntent = new Intent(MainActivity.this, LoginInfoActivity.class);
-                                startActivityForResult(loginIntent, LoginInfoActivity.RC_LOGIN_INFO);
-                            } else {
-                                Toast.makeText(getApplicationContext(), "Check your internet connection!", Toast.LENGTH_SHORT).show();
-                                finish();
-                            }
+                            Toast.makeText(getApplicationContext(), "Check your internet connection!", Toast.LENGTH_SHORT).show();
+                            finish();
                         }
-                    } catch (IllegalAccessException e) {
-                        Log.e("User not defined", "Probably user is not signed in");
                     }
                 }
             };
@@ -207,68 +203,46 @@ public class MainActivity extends AppCompatActivity {
             if (resultCode == RESULT_CANCELED) {
                 finish();
             } else if (resultCode == RESULT_OK) {
+                bundle = new Bundle();
+                bundle.putString(FirebaseAnalytics.Param.METHOD, "Phone");
                 try {
-                    bundle = new Bundle();
-                    bundle.putString(FirebaseAnalytics.Param.METHOD, "Phone");
-                    try {
-                        bundle.putString("name", CurrentUser.getInstance().getName());
-                        bundle.putString("email", CurrentUser.getInstance().getEmail());
-                        bundle.putString("phone", CurrentUser.getInstance().getPhone());
-                        bundle.putString("uid", CurrentUser.getInstance().getUid());
-                    } catch (IllegalAccessException e) {
-                        bundle.putString("error", e.getMessage());
-                    } finally {
-                        analytics.logEvent(FirebaseAnalytics.Event.LOGIN, bundle);
-                    }
-                    //TODO: Update code for token
-                    CurrentUser.getInstance().setToken(FirebaseInstanceId.getInstance().getToken());
-                    Map<String, Object> userMap = new HashMap<>();
-                    userMap.put("name", CurrentUser.getInstance().getName());
-                    userMap.put("email", CurrentUser.getInstance().getEmail());
-                    userMap.put("phone", CurrentUser.getInstance().getPhone());
-                    userMap.put("uid", CurrentUser.getInstance().getUid());
-                    userMap.put("token", CurrentUser.getInstance().getToken());
-                    referenceUsers.child(CurrentUser.getInstance().getPhone()).updateChildren(userMap).addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            Bundle bundle = new Bundle();
-                            bundle.putBoolean("Success", task.isSuccessful());
-                            bundle.putBoolean("Cancel", task.isCanceled());
-                            bundle.putBoolean("Complete", task.isComplete());
-                            bundle.putString("Failure", task.getException() == null ? "null" : task.getException().getMessage());
-                            analytics.logEvent("update_user", bundle);
-                            try {
-                                loadNavigationHeader();
-                                loadClasses();
-                            } catch (IllegalAccessException e) {
-                                bundle = new Bundle();
-                                bundle.putString(FirebaseAnalytics.Param.CHECKOUT_OPTION, "User - 0");
-                                bundle.putString(FirebaseAnalytics.Param.CHECKOUT_STEP, "Not defined");
-                                analytics.logEvent(FirebaseAnalytics.Event.CHECKOUT_PROGRESS, bundle);
-                                Log.e("User not defined", "Probably user is not signed in");
-                            }
-                        }
-                    });
-                } catch (IllegalAccessException e) {
-                    bundle = new Bundle();
-                    bundle.putString(FirebaseAnalytics.Param.CHECKOUT_OPTION, "User - 1");
-                    bundle.putString(FirebaseAnalytics.Param.CHECKOUT_STEP, "Not defined");
-                    analytics.logEvent(FirebaseAnalytics.Event.CHECKOUT_PROGRESS, bundle);
-                    Log.e("User not defined", "Probably user is not signed in");
+                    bundle.putString("name", CurrentUser.getInstance().getName());
+                    bundle.putString("email", CurrentUser.getInstance().getEmail());
+                    bundle.putString("phone", CurrentUser.getInstance().getPhone());
+                    bundle.putString("uid", CurrentUser.getInstance().getUid());
+                } finally {
+                    analytics.logEvent(FirebaseAnalytics.Event.LOGIN, bundle);
                 }
+                //TODO: Update code for token
+                CurrentUser.getInstance().setToken(FirebaseInstanceId.getInstance().getToken());
+                Map<String, Object> userMap = new HashMap<>();
+                userMap.put("name", CurrentUser.getInstance().getName());
+                userMap.put("email", CurrentUser.getInstance().getEmail());
+                userMap.put("phone", CurrentUser.getInstance().getPhone());
+                userMap.put("uid", CurrentUser.getInstance().getUid());
+                userMap.put("token", CurrentUser.getInstance().getToken());
+                referenceUsers.child(CurrentUser.getInstance().getPhone()).updateChildren(userMap).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        Bundle bundle = new Bundle();
+                        bundle.putBoolean("Success", task.isSuccessful());
+                        bundle.putBoolean("Cancel", task.isCanceled());
+                        bundle.putBoolean("Complete", task.isComplete());
+                        bundle.putString("Failure", task.getException() == null ? "null" : task.getException().getMessage());
+                        analytics.logEvent("update_user", bundle);
+                        loadNavigationHeader();
+                        loadClasses();
+                    }
+                });
             }
         }
         if (requestCode == LoginInfoActivity.RC_LOGIN_INFO) {
-            try {
-                CurrentUser.getInstance().setName(data.getStringExtra(LoginInfoActivity.RESULT_NAME));
-                CurrentUser.getInstance().setEmail(data.getStringExtra(LoginInfoActivity.RESULT_EMAIL));
-                startActivityForResult(AuthUI.getInstance().createSignInIntentBuilder().setIsSmartLockEnabled(true)
-                        .setTheme(R.style.FirebaseTheme)
-                        .setAvailableProviders(Collections.singletonList(new AuthUI.IdpConfig.PhoneBuilder().build()))
-                        .build(), RC_SIGN_IN);
-            } catch (IllegalAccessException e) {
-                Log.e("User not defined", "Probably user is not signed in");
-            }
+            CurrentUser.getInstance().setName(data.getStringExtra(LoginInfoActivity.RESULT_NAME));
+            CurrentUser.getInstance().setEmail(data.getStringExtra(LoginInfoActivity.RESULT_EMAIL));
+            startActivityForResult(AuthUI.getInstance().createSignInIntentBuilder().setIsSmartLockEnabled(true)
+                    .setTheme(R.style.FirebaseTheme)
+                    .setAvailableProviders(Collections.singletonList(new AuthUI.IdpConfig.PhoneBuilder().build()))
+                    .build(), RC_SIGN_IN);
         }
     }
 
@@ -331,50 +305,42 @@ public class MainActivity extends AppCompatActivity {
         invalidateOptionsMenu();    //Refresh
     }
 
-    public void loadNavigationHeader() throws IllegalAccessException {
+    public void loadNavigationHeader() {
         GlideApp.with(this).load("https://atgbcentral.com/data/out/193/5690319-material-wallpaper.png").diskCacheStrategy(DiskCacheStrategy.ALL).into(ivNavHeaderBackground);
         //When connected with firebase, load user data into navigation header
         referenceUsers.child(CurrentUser.getInstance().getPhone()).addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, String s) {
-                try {
-                    if (dataSnapshot.getKey().equals("phone")) {
-                        tvPhoneNumber.setText(CurrentUser.getInstance().getPhone());
-                    }
-                    if (dataSnapshot.getKey().equals("name")) {
-                        CurrentUser.getInstance().setName(String.valueOf(dataSnapshot.getValue()));
-                        tvUsername.setText(CurrentUser.getInstance().getName());
-                    }
+                if (dataSnapshot.getKey().equals("phone")) {
+                    tvPhoneNumber.setText(CurrentUser.getInstance().getPhone());
+                }
+                if (dataSnapshot.getKey().equals("name")) {
+                    CurrentUser.getInstance().setName(String.valueOf(dataSnapshot.getValue()));
+                    tvUsername.setText(CurrentUser.getInstance().getName());
+                }
                         /*if (dataSnapshot.getKey().equals("uid")) {
                             CurrentUser.getInstance().setUid(String.valueOf(dataSnapshot.getValue()));
                         }*/
-                    if (dataSnapshot.getKey().equals("token")) {
-                        CurrentUser.getInstance().setToken(String.valueOf(dataSnapshot.getValue()));
-                    }
-                } catch (IllegalAccessException e) {
-                    Log.e("User not defined", "Probably user is not signed in");
+                if (dataSnapshot.getKey().equals("token")) {
+                    CurrentUser.getInstance().setToken(String.valueOf(dataSnapshot.getValue()));
                 }
             }
 
             @Override
             public void onChildChanged(@NonNull DataSnapshot dataSnapshot, String s) {
-                try {
-                    if (dataSnapshot.getKey().equals("phone")) {
-                        //CurrentUser.getInstance().setPhone(String.valueOf(dataSnapshot.getValue()));
-                        tvPhoneNumber.setText(CurrentUser.getInstance().getPhone());
-                    }
-                    if (dataSnapshot.getKey().equals("name")) {
-                        CurrentUser.getInstance().setName(String.valueOf(dataSnapshot.getValue()));
-                        tvUsername.setText(CurrentUser.getInstance().getName());
-                    }
+                if (dataSnapshot.getKey().equals("phone")) {
+                    //CurrentUser.getInstance().setPhone(String.valueOf(dataSnapshot.getValue()));
+                    tvPhoneNumber.setText(CurrentUser.getInstance().getPhone());
+                }
+                if (dataSnapshot.getKey().equals("name")) {
+                    CurrentUser.getInstance().setName(String.valueOf(dataSnapshot.getValue()));
+                    tvUsername.setText(CurrentUser.getInstance().getName());
+                }
                         /*if (dataSnapshot.getKey().equals("uid")) {
                             CurrentUser.getInstance().setUid(String.valueOf(dataSnapshot.getValue()));
                         }*/
-                    if (dataSnapshot.getKey().equals("token")) {
-                        CurrentUser.getInstance().setToken(String.valueOf(dataSnapshot.getValue()));
-                    }
-                } catch (IllegalAccessException e) {
-                    Log.e("User not defined", "Probably user is not signed in");
+                if (dataSnapshot.getKey().equals("token")) {
+                    CurrentUser.getInstance().setToken(String.valueOf(dataSnapshot.getValue()));
                 }
             }
 
@@ -392,7 +358,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    public void loadClasses() throws IllegalAccessException {
+    public void loadClasses() {
         //When firebase is connected, load user's classes into navigation drawer
         referenceUsers.child(CurrentUser.getInstance().getPhone()).child("classes").addChildEventListener(new ChildEventListener() {
             @Override
@@ -516,47 +482,43 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_new_class:
-                try {
-                    if (CurrentUser.getFirebaseUser() == null) {
-                        Toast.makeText(this, "Please wait!", Toast.LENGTH_SHORT).show();
-                        break;
-                    }
-                    CurrentUser user = CurrentUser.getInstance();
-                    JoinRequest joinRequest = new JoinRequest(user.getName(), user.getPhone());
-                    DatabaseReference juitRef = referenceClasses.child("juit1620");
-                    if (referenceJoinReq == null)
-                        referenceJoinReq = juitRef.child("join_req");
-                    String phone = user.getPhone();
-                    juitRef.child("participants").child(phone).addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            if (!dataSnapshot.exists()) {
-                                referenceJoinReq.child(phone).addListenerForSingleValueEvent(new ValueEventListener() {
-                                    @Override
-                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                        if (!dataSnapshot.exists()) {
-                                            referenceJoinReq.child(phone).setValue(joinRequest);
-                                            Toast.makeText(MainActivity.this, "Join request sent!\nYou will soon be a part of an awesome group \uD83D\uDE0E", Toast.LENGTH_SHORT).show();
-                                        } else
-                                            Toast.makeText(MainActivity.this, "You are already a part of the awesome group \uD83D\uDE0E", Toast.LENGTH_SHORT).show();
-                                    }
-
-                                    @Override
-                                    public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                                    }
-                                });
-                            } else
-                                Toast.makeText(MainActivity.this, "You are already a part of the awesome group \uD83D\uDE0E", Toast.LENGTH_SHORT).show();
-                        }
-
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError databaseError) {
-                        }
-                    });
-                } catch (IllegalAccessException e) {
-                    Log.e("User not defined", "Probably user is not signed in");
+                if (CurrentUser.getFirebaseUser() == null) {
+                    Toast.makeText(this, "Please wait!", Toast.LENGTH_SHORT).show();
+                    break;
                 }
+                CurrentUser user = CurrentUser.getInstance();
+                JoinRequest joinRequest = new JoinRequest(user.getName(), user.getPhone());
+                DatabaseReference juitRef = referenceClasses.child("juit1620");
+                if (referenceJoinReq == null)
+                    referenceJoinReq = juitRef.child("join_req");
+                String phone = user.getPhone();
+                juitRef.child("participants").child(phone).addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (!dataSnapshot.exists()) {
+                            referenceJoinReq.child(phone).addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                    if (!dataSnapshot.exists()) {
+                                        referenceJoinReq.child(phone).setValue(joinRequest);
+                                        Toast.makeText(MainActivity.this, "Join request sent!\nYou will soon be a part of an awesome group \uD83D\uDE0E", Toast.LENGTH_SHORT).show();
+                                    } else
+                                        Toast.makeText(MainActivity.this, "You are already a part of the awesome group \uD83D\uDE0E", Toast.LENGTH_SHORT).show();
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                }
+                            });
+                        } else
+                            Toast.makeText(MainActivity.this, "You are already a part of the awesome group \uD83D\uDE0E", Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                    }
+                });
                 /*
                 String[] joinOrCreate = {"Join a class", "Create a class"};
                 AlertDialog.Builder joinCreateBuilder = new AlertDialog.Builder(this);

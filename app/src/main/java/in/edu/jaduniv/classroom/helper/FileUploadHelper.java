@@ -198,35 +198,38 @@ public class FileUploadHelper extends Service {
                             try {
                                 long lastTime[] = new long[]{0L};
                                 //Upload the file
-                                upload = cloudinary.uploader().uploadLarge(new File(Uri.parse(fileUri).getPath()), config, new ProgressCallback() {
+                                upload = cloudinary.uploader()
+                                        .uploadLarge(new File(Uri.parse(fileUri).getPath()),
+                                                config,
+                                                new ProgressCallback() {
 
-                                    /**
-                                     * The progress callback of our upload process.
-                                     * We update the upload notification after every 0.5 seconds.
-                                     *
-                                     * @param bytesUploaded Total bytes uploaded
-                                     * @param totalBytes Total bytes to be uploaded
-                                     */
-                                    @Override
-                                    public void onProgress(long bytesUploaded, long totalBytes) {
-                                        //If network lost, cancel
-                                        if (!isNetworkConnected()) {
-                                            Toast.makeText(getApplicationContext(), "Download cancelled", Toast.LENGTH_SHORT).show();
-                                            return;
-                                        }
+                                                    /**
+                                                     * The progress callback of our upload process.
+                                                     * We update the upload notification after every 0.5 seconds.
+                                                     *
+                                                     * @param bytesUploaded Total bytes uploaded
+                                                     * @param totalBytes Total bytes to be uploaded
+                                                     */
+                                                    @Override
+                                                    public void onProgress(long bytesUploaded, long totalBytes) {
+                                                        //If network lost, cancel
+                                                        if (!isNetworkConnected()) {
+                                                            Toast.makeText(getApplicationContext(), "Download cancelled", Toast.LENGTH_SHORT).show();
+                                                            return;
+                                                        }
 
-                                        //If difference between last update time and current time is less than 500 ms, return
-                                        long currTime = System.currentTimeMillis();
-                                        if (currTime - lastTime[0] < 500)
-                                            return;
+                                                        //If difference between last update time and current time is less than 500 ms, return
+                                                        long currTime = System.currentTimeMillis();
+                                                        if (currTime - lastTime[0] < 500)
+                                                            return;
 
-                                        //Oterwise, update the notification and last update time
-                                        lastTime[0] = currTime;
-                                        notificationBuilder.setProgress(100, (int) (bytesUploaded / (float) totalBytes * 100), false);
-                                        if (notificationManager != null)
-                                            notificationManager.notify(startId, notificationBuilder.build());
-                                    }
-                                });
+                                                        //Oterwise, update the notification and last update time
+                                                        lastTime[0] = currTime;
+                                                        notificationBuilder.setProgress(100, (int) (bytesUploaded / (float) totalBytes * 100), false);
+                                                        if (notificationManager != null)
+                                                            notificationManager.notify(startId, notificationBuilder.build());
+                                                    }
+                                                });
                             } catch (IOException | IllegalStateException e) {
                                 //Handle thrown exception. Most probably because of network failure
                                 e.printStackTrace();

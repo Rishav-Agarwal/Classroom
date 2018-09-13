@@ -17,42 +17,42 @@ public class User {
         classes = null;
     }
 
-    User(String name, String uid, String phone, String email, String token, ArrayList<String> classes) {
+    User(String name, String email, String token, ArrayList<String> classes) {
         this.name = name;
         this.email = email;
         this.token = token;
         this.classes = classes;
     }
 
-    public String getName() throws IllegalAccessException {
+    public String getName() {
         return name;
     }
 
-    public void setName(String name) throws IllegalAccessException {
+    public void setName(String name) {
         this.name = name;
     }
 
-    public String getEmail() throws IllegalAccessException {
+    public String getEmail() {
         return email;
     }
 
-    public void setEmail(String email) throws IllegalAccessException {
+    public void setEmail(String email) {
         this.email = email;
     }
 
-    public ArrayList<String> getClasses() throws IllegalAccessException {
+    public ArrayList<String> getClasses() {
         return classes;
     }
 
-    public void setClasses(ArrayList<String> classes) throws IllegalAccessException {
+    public void setClasses(ArrayList<String> classes) {
         this.classes = classes;
     }
 
-    public String getToken() throws IllegalAccessException {
+    public String getToken() {
         return token;
     }
 
-    public void setToken(String token) throws IllegalAccessException {
+    public void setToken(String token) {
         this.token = token;
     }
 }

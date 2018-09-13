@@ -45,5 +45,7 @@
     <string name="nothing_here">Nothing here!</string>
 
     <string name="file_upload_service_desc">This service is used to upload files to the server.</string>
+    <string name="class_name">Class name</string>
+    <string name="class_code">Class code</string>
 
 </resources>

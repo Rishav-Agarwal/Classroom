@@ -10,13 +10,13 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import in.edu.jaduniv.classroom.R;
-import in.edu.jaduniv.classroom.object.Class;
+import in.edu.jaduniv.classroom.object.__Class;
 
 public final class RoutineClassAdapter extends RecyclerView.Adapter<RoutineClassAdapter.ViewHolder> {
 
-    private final ArrayList<Class> classes;
+    private final ArrayList<__Class> classes;
 
-    public RoutineClassAdapter(ArrayList<Class> classes) {
+    public RoutineClassAdapter(ArrayList<__Class> classes) {
         this.classes = classes;
     }
 
@@ -28,7 +28,7 @@ public final class RoutineClassAdapter extends RecyclerView.Adapter<RoutineClass
 
     @Override
     public void onBindViewHolder(@NonNull RoutineClassAdapter.ViewHolder holder, int position) {
-        final Class _class = classes.get(holder.getAdapterPosition());
+        final __Class _class = classes.get(holder.getAdapterPosition());
         ((TextView) holder.getView().findViewById(R.id.class_subject)).setText(String.format("%s | %s", _class.getName(), _class.getDescription()));
         ((TextView) holder.getView().findViewById(R.id.class_prof)).setText(_class.getProf());
         ((TextView) holder.getView().findViewById(R.id.class_location)).setText(_class.getLocation());

@@ -3,7 +3,7 @@ package in.edu.jaduniv.classroom.object;
 import java.util.ArrayList;
 
 /**
- * Class to store a single user's data
+ * __Class to store a single user's data
  */
 public class User {
     private String name;

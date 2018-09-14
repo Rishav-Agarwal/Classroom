@@ -2,7 +2,7 @@ package in.edu.jaduniv.classroom.object;
 
 import java.io.Serializable;
 
-public final class Class implements Serializable {
+public final class __Class implements Serializable {
     private int day;
     private int length;
     private String name = null;
@@ -12,10 +12,10 @@ public final class Class implements Serializable {
     private String startTime = null;
     private String endTime = null;
 
-    public Class() {
+    public __Class() {
     }
 
-    public Class(int day, int length, String name, String description, String prof, String location, String startTime, String endTime) {
+    public __Class(int day, int length, String name, String description, String prof, String location, String startTime, String endTime) {
         this.day = day;
         this.length = length;
         this.name = name;
@@ -84,9 +84,9 @@ public final class Class implements Serializable {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof Class))
+        if (!(obj instanceof __Class))
             return false;
-        Class _class = (Class) obj;
+        __Class _class = (__Class) obj;
         return this == _class
                 || day == _class.day
                 && length == _class.length

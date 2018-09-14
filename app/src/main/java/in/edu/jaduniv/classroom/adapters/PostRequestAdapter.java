@@ -1,11 +1,15 @@
 package in.edu.jaduniv.classroom.adapters;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.DownloadManager;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.v4.content.FileProvider;
 import android.support.v7.view.menu.MenuBuilder;
@@ -17,7 +21,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.MimeTypeMap;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -39,10 +42,11 @@ import java.util.Locale;
 import java.util.Map;
 
 import in.edu.jaduniv.classroom.R;
-import in.edu.jaduniv.classroom.object.Post;
 import in.edu.jaduniv.classroom.helper.DownloadDbHelper;
+import in.edu.jaduniv.classroom.object.Post;
 import in.edu.jaduniv.classroom.utility.CloudinaryUtils;
 import in.edu.jaduniv.classroom.utility.FirebaseUtils;
+import in.edu.jaduniv.classroom.utility.PermissionUtils;
 
 public class PostRequestAdapter extends RecyclerView.Adapter<PostRequestAdapter.PostRequestViewHolder> {
 
@@ -230,11 +234,7 @@ public class PostRequestAdapter extends RecyclerView.Adapter<PostRequestAdapter.
                             case DownloadManager.STATUS_SUCCESSFUL:
                                 Log.d("Download status", "STATUS_SUCCESSFUL");
                                 if (filePath != null) {
-                                    if (!openDoc(filePath)) {
-                                        boolean isDeleted = deleteDoc(filePath);
-                                        downloadId = downloadFile(holder.getAdapterPosition());
-                                        DownloadDbHelper.getInstance(context).addDownload(context.getPackageName() + "." + classCode + ".PostRequests." + request.getLongTime(), downloadId);
-                                    }
+                                    openDoc(filePath, request.getMimeType());
                                 } else {
                                     downloadFile(holder.getAdapterPosition());
                                     DownloadDbHelper.getInstance(context).addDownload(context.getPackageName() + "." + classCode + ".PostRequests." + request.getLongTime(), downloadId);
@@ -272,7 +272,7 @@ public class PostRequestAdapter extends RecyclerView.Adapter<PostRequestAdapter.
         }
     }
 
-    private Long downloadFile(int position) {
+    private Long downloadWithPermission(int position) {
         Long downloadId = null;
         Post post = getItem(position);
         if (post != null) {
@@ -288,10 +288,18 @@ public class PostRequestAdapter extends RecyclerView.Adapter<PostRequestAdapter.
                     downloadId = manager.enqueue(request);
                 }
             } catch (Exception e) {
+                Log.e("Error downloading file", e.getMessage());
                 e.printStackTrace();
             }
         }
         return downloadId;
+    }
+
+    private Long downloadFile(int position) {
+        if (PermissionUtils.isPermitted(context, PermissionUtils.Permissions.WRITE_EXTERNAL_STORAGE))
+            return downloadWithPermission(position);
+        PermissionUtils.request((Activity) context, PermissionUtils.WRITE_EXTERNAL_STORAGE, PermissionUtils.Permissions.WRITE_EXTERNAL_STORAGE);
+        return null;
     }
 
     private boolean deleteDoc(String uri) {
@@ -306,20 +314,29 @@ public class PostRequestAdapter extends RecyclerView.Adapter<PostRequestAdapter.
         return deleted;
     }
 
-    private boolean openDoc(String uri) {
-        Intent open = new Intent(Intent.ACTION_VIEW);
-        open.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-        String mimeType;
-        String extension;
-        extension = MimeTypeMap.getFileExtensionFromUrl(uri);
-        if (uri != null && extension != null) {
-            mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
-            open.setDataAndType(FileProvider.getUriForFile(context, context.getPackageName() + ".provider", new File(Uri.parse(uri).getPath())), mimeType);
-            Intent openChooser = Intent.createChooser(open, "Choose app");
-            context.startActivity(openChooser);
-            return true;
+    private boolean openDoc(String uri, String mimeType) {
+        if (mimeType == null || mimeType.equals("null")) {
+            Toast.makeText(context.getApplicationContext(), "Can't open file!", Toast.LENGTH_LONG).show();
+            return false;
         }
-        return false;
+        Intent open = new Intent(Intent.ACTION_VIEW);
+        open.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        if (uri == null)
+            return false;
+        open.setDataAndType(FileProvider.getUriForFile(context, context.getPackageName() + ".provider", new File(Uri.parse(uri).getPath())), mimeType != null && !mimeType.equals("null") ? mimeType : "*/*");
+        try {
+            context.startActivity(open);
+        } catch (ActivityNotFoundException e) {
+            new Handler(Looper.getMainLooper())
+                    .post(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(context.getApplicationContext(), "Can't open file!", Toast.LENGTH_LONG).show();
+                        }
+                    });
+            return false;
+        }
+        return true;
     }
 
     @SuppressLint("RestrictedApi")

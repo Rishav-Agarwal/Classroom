@@ -11,7 +11,6 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -144,11 +143,13 @@ public class FileUploadHelper extends Service {
                     String phone = data.getString("phone", "");
                     String name = data.getString("name", "");
                     final long longTime = data.getLong("longTime", 0);
-                    String fileUri = data.getString("uri", "");
+                    String receivedUriString = data.getString("uri", "");
                     final String fileName = data.getString("fileName", "");
+                    File file = (File) data.getSerializable("file");
                     final String classCode = data.getString("classCode", "");
+                    String mimeType = data.getString("mime");
 
-                    Log.d("fileUri", fileUri + "");
+                    Log.d("fileUri", receivedUriString + "");
 
                     //Build notification
                     Intent postIntent = new Intent(getApplicationContext(), EventAndNotice.class);
@@ -184,52 +185,50 @@ public class FileUploadHelper extends Service {
                     //Start this service as foreground service by showing notification
                     startForeground(startId, notification);
 
-                    if (fileUri != null && !fileUri.trim().equals("")) {
+                    if (receivedUriString != null && !receivedUriString.trim().equals("")) {
                         //If user has selected a file, start uploading
 
+                        Log.d("Mime Type", String.valueOf(mimeType));
                         Cloudinary cloudinary = CloudinaryUtils.getInstance();
                         try {
                             //Get the configuration for our Cloudinary cloud
                             Map<String, String> config = new HashMap<>(CloudinaryUtils.getCloudinaryConfig());
                             //Put the folder
                             config.put("folder", "classroom/" + classCode + "/posts/");
-                            //config.put("public_id", new File(Uri.parse(fileUri).getPath()).getName());
                             Map upload;
                             try {
                                 long lastTime[] = new long[]{0L};
                                 //Upload the file
-                                upload = cloudinary.uploader()
-                                        .uploadLarge(new File(Uri.parse(fileUri).getPath()),
-                                                config,
-                                                new ProgressCallback() {
+                                upload = cloudinary.uploader().uploadLarge(file, config,
+                                        new ProgressCallback() {
 
-                                                    /**
-                                                     * The progress callback of our upload process.
-                                                     * We update the upload notification after every 0.5 seconds.
-                                                     *
-                                                     * @param bytesUploaded Total bytes uploaded
-                                                     * @param totalBytes Total bytes to be uploaded
-                                                     */
-                                                    @Override
-                                                    public void onProgress(long bytesUploaded, long totalBytes) {
-                                                        //If network lost, cancel
-                                                        if (!isNetworkConnected()) {
-                                                            Toast.makeText(getApplicationContext(), "Download cancelled", Toast.LENGTH_SHORT).show();
-                                                            return;
-                                                        }
+                                            /**
+                                             * The progress callback of our upload process.
+                                             * We update the upload notification after every 0.5 seconds.
+                                             *
+                                             * @param bytesUploaded Total bytes uploaded
+                                             * @param totalBytes Total bytes to be uploaded
+                                             */
+                                            @Override
+                                            public void onProgress(long bytesUploaded, long totalBytes) {
+                                                //If network lost, cancel
+                                                if (!isNetworkConnected()) {
+                                                    Toast.makeText(getApplicationContext(), "Download cancelled", Toast.LENGTH_SHORT).show();
+                                                    return;
+                                                }
 
-                                                        //If difference between last update time and current time is less than 500 ms, return
-                                                        long currTime = System.currentTimeMillis();
-                                                        if (currTime - lastTime[0] < 500)
-                                                            return;
+                                                //If difference between last update time and current time is less than 500 ms, return
+                                                long currTime = System.currentTimeMillis();
+                                                if (currTime - lastTime[0] < 500)
+                                                    return;
 
-                                                        //Oterwise, update the notification and last update time
-                                                        lastTime[0] = currTime;
-                                                        notificationBuilder.setProgress(100, (int) (bytesUploaded / (float) totalBytes * 100), false);
-                                                        if (notificationManager != null)
-                                                            notificationManager.notify(startId, notificationBuilder.build());
-                                                    }
-                                                });
+                                                //Oterwise, update the notification and last update time
+                                                lastTime[0] = currTime;
+                                                notificationBuilder.setProgress(100, (int) (bytesUploaded / (float) totalBytes * 100), false);
+                                                if (notificationManager != null)
+                                                    notificationManager.notify(startId, notificationBuilder.build());
+                                            }
+                                        });
                             } catch (IOException | IllegalStateException e) {
                                 //Handle thrown exception. Most probably because of network failure
                                 e.printStackTrace();
@@ -249,11 +248,11 @@ public class FileUploadHelper extends Service {
                             Log.d("Data", upload + "");
 
                             //Get the new post data and call the complete callback
-                            fileUri = (String) upload.get("secure_url");
+                            String fileUri = (String) upload.get("secure_url");
                             String resourceType = (String) upload.get("resource_type");
                             String publicId = (String) upload.get("public_id");
                             //Create new post object which is passed to complete listener's callback function
-                            Post post = new Post(title, content, pinned, phone, name, ServerValue.TIMESTAMP, longTime, fileUri, fileName, resourceType, publicId);
+                            Post post = new Post(title, content, pinned, phone, name, ServerValue.TIMESTAMP, longTime, fileUri, fileName, resourceType, publicId, mimeType != null ? mimeType : "*/*");
                             listener.onUploadCompleted(post);
                         } catch (RuntimeException e) {
                             //Handle exception thrown at run-time most probably because the file is not supported by cloudinary
@@ -271,12 +270,12 @@ public class FileUploadHelper extends Service {
                             if (name == null || name.equals("") || name.startsWith("undefined") || name.startsWith("null"))
                                 name = "Admin";
                             Log.d("NAME :: PHONE", name + " :: " + phone);
-                            Post post = new Post(title, content, pinned, phone, name, ServerValue.TIMESTAMP, longTime, null, fileName, null, null);
+                            Post post = new Post(title, content, pinned, phone, name, ServerValue.TIMESTAMP, longTime, null, fileName, null, null, "*/*");
                             listener.onUploadCompleted(post);
                         }
                     }
 
-                    //Since current upload is complete, cancel the ongoind notification
+                    //Since current upload is complete, cancel the ongoing notification
                     if (notificationManager != null)
                         notificationManager.cancel(startId);
             }

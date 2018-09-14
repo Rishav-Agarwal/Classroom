@@ -114,7 +114,8 @@ public class PostRequests extends AppCompatActivity {
                 String fileName = String.valueOf(dataSnapshot.child("fileName").getValue());
                 String resourceType = String.valueOf(dataSnapshot.child("resourceType").getValue());
                 String publicId = String.valueOf(dataSnapshot.child("publicId").getValue());
-                Post postRequest = new Post(title, description, pinned, postedByNumber, postedByName, null, time, uri, fileName, resourceType, publicId);
+                String mimeType = String.valueOf(dataSnapshot.child("mimeType").getValue());
+                Post postRequest = new Post(title, description, pinned, postedByNumber, postedByName, null, time, uri, fileName, resourceType, publicId, mimeType);
                 postRequests.add(postRequest);
                 postRequestKeys.add(dataSnapshot.getKey());
                 if (postRequests.size() == 1) {

@@ -15,18 +15,18 @@ import java.util.ArrayList;
 
 import in.edu.jaduniv.classroom.R;
 import in.edu.jaduniv.classroom.fragment.DayFragment;
-import in.edu.jaduniv.classroom.object.Class;
+import in.edu.jaduniv.classroom.object.__Class;
 import in.edu.jaduniv.classroom.utility.TimeUtils;
 
 public final class RoutineDayAdapter extends FragmentStatePagerAdapter {
 
     private final int DAYS_COUNT;
-    private final ArrayList<ArrayList<Class>> timeTable;
+    private final ArrayList<ArrayList<__Class>> timeTable;
 
     //Store list of fragments in our viewpager
     private Fragment[] fragments;
 
-    public RoutineDayAdapter(FragmentManager fm, ArrayList<ArrayList<Class>> timeTable) {
+    public RoutineDayAdapter(FragmentManager fm, ArrayList<ArrayList<__Class>> timeTable) {
         super(fm);
         DAYS_COUNT = 6;
         this.timeTable = timeTable;

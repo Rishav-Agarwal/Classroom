@@ -10,8 +10,8 @@
     <uses-permission android:name="android.permission.GET_TASKS" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-
     <!-- Add FOREGROUND_SERVICE permission when targeting API 28+ -->
+
     <application
         android:allowBackup="true"
         android:fullBackupContent="true"
@@ -71,12 +71,14 @@
 
         <activity
             android:name=".activity.SendFileFromOtherApp"
-            android:exported="true">
+            android:autoRemoveFromRecents="true"
+            android:excludeFromRecents="true"
+            android:exported="true"
+            tools:ignore="UnusedAttribute">
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
                 <category android:name="android.intent.category.DEFAULT" />
 
-                <data android:mimeType="file/*" />
                 <data android:mimeType="image/*" />
                 <data android:mimeType="video/*" />
                 <data android:mimeType="audio/*" />
@@ -98,5 +100,4 @@
             android:enabled="true"
             android:exported="false" />
     </application>
-
 </manifest>

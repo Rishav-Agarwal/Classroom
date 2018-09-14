@@ -3,10 +3,13 @@ package in.edu.jaduniv.classroom.adapters;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.DownloadManager;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.FileProvider;
@@ -18,10 +21,10 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.MimeTypeMap;
 import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -181,14 +184,7 @@ public class PostAdapter extends ArrayAdapter<Post> {
                             case DownloadManager.STATUS_SUCCESSFUL:
                                 Log.d("Download status", "STATUS_SUCCESSFUL");
                                 if (filePath != null) {
-                                    if (!openDoc(filePath)) {
-                                        boolean isDeleted = deleteDoc(filePath);
-                                        _id = downloadFile(position);
-                                        if (_id == null)
-                                            break;
-                                        downloadId = _id;
-                                        DownloadDbHelper.getInstance(context).addDownload(context.getPackageName() + "." + classCode + ".Posts." + post.getLongTime(), downloadId);
-                                    }
+                                    openDoc(filePath, post.getMimeType());
                                 } else {
                                     downloadFile(position);
                                     DownloadDbHelper.getInstance(context).addDownload(context.getPackageName() + "." + classCode + ".Posts." + post.getLongTime(), downloadId);
@@ -216,7 +212,6 @@ public class PostAdapter extends ArrayAdapter<Post> {
                         downloadId = _id;
                         DownloadDbHelper.getInstance(context).addDownload(context.getPackageName() + "." + classCode + ".Posts." + post.getLongTime(), downloadId);
                     }
-
                 }
             });
 
@@ -250,7 +245,7 @@ public class PostAdapter extends ArrayAdapter<Post> {
                     downloadId = manager.enqueue(request);
                 }
             } catch (Exception e) {
-                Log.e("Error dowloading file", e.getMessage());
+                Log.e("Error downloading file", e.getMessage());
                 e.printStackTrace();
             }
         }
@@ -276,18 +271,29 @@ public class PostAdapter extends ArrayAdapter<Post> {
         return deleted;
     }
 
-    private boolean openDoc(String uri) {
-        Intent open = new Intent(Intent.ACTION_VIEW);
-        open.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-        String extension = MimeTypeMap.getFileExtensionFromUrl(uri);
-        if (uri != null && extension != null) {
-            String mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
-            open.setDataAndType(FileProvider.getUriForFile(context, context.getPackageName() + ".provider", new File(Uri.parse(uri).getPath())), mimeType);
-            Intent openChooser = Intent.createChooser(open, "Choose app");
-            context.startActivity(openChooser);
-            return true;
+    private boolean openDoc(String uri, String mimeType) {
+        if (mimeType == null || mimeType.equals("null")) {
+            Toast.makeText(context.getApplicationContext(), "Can't open file!", Toast.LENGTH_LONG).show();
+            return false;
         }
-        return false;
+        Intent open = new Intent(Intent.ACTION_VIEW);
+        open.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        if (uri == null)
+            return false;
+        open.setDataAndType(FileProvider.getUriForFile(context, context.getPackageName() + ".provider", new File(Uri.parse(uri).getPath())), mimeType != null && !mimeType.equals("null") ? mimeType : "*/*");
+        try {
+            context.startActivity(open);
+        } catch (ActivityNotFoundException e) {
+            new Handler(Looper.getMainLooper())
+                    .post(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(context.getApplicationContext(), "Can't open file!", Toast.LENGTH_LONG).show();
+                        }
+                    });
+            return false;
+        }
+        return true;
     }
 
     @SuppressLint("RestrictedApi")

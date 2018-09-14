@@ -1,12 +1,15 @@
 package in.edu.jaduniv.classroom.activity;
 
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.OpenableColumns;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
@@ -30,7 +33,12 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import in.edu.jaduniv.classroom.R;
 import in.edu.jaduniv.classroom.adapters.PostAdapter;
@@ -46,7 +54,8 @@ import in.edu.jaduniv.classroom.utility.PermissionUtils;
 public class EventAndNotice extends AppCompatActivity {
 
     private static final int RC_CHOOSE_FILE = 1000;
-    public static String attachedUri = null;
+    public static String attachedUri = null, attachedFileName = null, attachedMimeType = null;
+    public static File attachedFile = null;
     public static OnCompleteListener listener;
     private static EventAndNotice eventAndNotice = null;
 
@@ -86,10 +95,13 @@ public class EventAndNotice extends AppCompatActivity {
         classCode = intent.getStringExtra("class");
 
         attachedUri = intent.getStringExtra("uri");
+        attachedFileName = intent.getStringExtra("fileName");
+        attachedFile = (File) intent.getSerializableExtra("file");
+        attachedMimeType = intent.getType();
         if (attachedUri != null) {
             sendFragment = new FileSelectedFragment();
             Bundle bundle = new Bundle();
-            bundle.putString("uri", attachedUri);
+            bundle.putString("fileName", attachedFileName != null && !attachedFileName.equals("null") ? attachedFileName : "Untitled");
             sendFragment.setArguments(bundle);
             FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
             fragmentTransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
@@ -151,11 +163,26 @@ public class EventAndNotice extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == RC_CHOOSE_FILE && resultCode == RESULT_OK && data != null && data.getData() != null) {
             Log.d("data", data.toString());
+            Cursor cursor = queryDoc(getContentResolver(), data.getData());
+            if (cursor == null) {
+                return;
+            }
+            attachedMimeType = cursor.getString(cursor.getColumnIndex("mime_type"));
+            try {
+                attachedFile = handleIntent(data);
+            } catch (IOException e) {
+                Log.d("Couldn't get file", e.getMessage());
+                e.printStackTrace();
+                return;
+            }
             attachedUri = String.valueOf(data.getData());
+            attachedFileName = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
+            Log.d("Mime", String.valueOf(attachedMimeType));
+            Log.d("File", String.valueOf(attachedFile));
 
             sendFragment = new FileSelectedFragment();
             Bundle bundle = new Bundle();
-            bundle.putString("uri", data.getData() + "");
+            bundle.putString("fileName", attachedFileName);
             sendFragment.setArguments(bundle);
             FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
             fragmentTransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
@@ -209,12 +236,6 @@ public class EventAndNotice extends AppCompatActivity {
                         PermissionUtils.request(EventAndNotice.this, PermissionUtils.WRITE_EXTERNAL_STORAGE, PermissionUtils.Permissions.WRITE_EXTERNAL_STORAGE);
                     } else {
                         String strPost = etSendPost.getText().toString().trim();
-                        String fileName;
-                        try {
-                            fileName = new File(Uri.parse(attachedUri).getPath()).getName();
-                        } catch (NullPointerException npe) {
-                            fileName = "";
-                        }
                         etSendPost.setText("");
                         Intent fileUploadService = new Intent(EventAndNotice.this, FileUploadHelper.class);
                         fileUploadService.setAction(CloudinaryUtils.ACTION_POST_UPLOAD);
@@ -226,7 +247,9 @@ public class EventAndNotice extends AppCompatActivity {
                         fileUploadBundle.putString("name", CurrentUser.getInstance().getName());
                         fileUploadBundle.putLong("longTime", 0L);
                         fileUploadBundle.putString("uri", attachedUri);
-                        fileUploadBundle.putString("fileName", fileName);
+                        fileUploadBundle.putString("fileName", attachedFileName);
+                        fileUploadBundle.putSerializable("file", attachedFile);
+                        fileUploadBundle.putString("mime", attachedMimeType);
                         fileUploadBundle.putString("classCode", classCode);
                         listener = new OnCompleteListener() {
                             @Override
@@ -254,7 +277,8 @@ public class EventAndNotice extends AppCompatActivity {
                             fragmentTransaction.commitAllowingStateLoss();
                         }
                         setSendFragment(null);
-                        attachedUri = null;
+                        attachedUri = attachedFileName = attachedMimeType = null;
+                        attachedFile = null;
                     }
                 } else {
                     Toast.makeText(getApplicationContext(), "Please check your internet connection", Toast.LENGTH_SHORT).show();
@@ -265,12 +289,20 @@ public class EventAndNotice extends AppCompatActivity {
         ivSendFile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent fileSelectIntent = new Intent(Intent.ACTION_GET_CONTENT);
-                fileSelectIntent.setType("file/*");
-                Intent fileIntent = Intent.createChooser(fileSelectIntent, "file");
+                Intent fileSelectIntent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+                fileSelectIntent.setType("*/*")
+                        .addCategory(Intent.CATEGORY_OPENABLE)
+                        .putExtra(Intent.EXTRA_MIME_TYPES, new String[]{"image/*", "audio/*", "video/*", "application/*"});
+                Intent fileIntent = Intent.createChooser(fileSelectIntent, "Choose file");
                 startActivityForResult(fileIntent, RC_CHOOSE_FILE);
             }
         });
+    }
+
+    private String getFileName(Uri uri) {
+        if (ContentResolver.SCHEME_CONTENT.equals(uri.getScheme()))
+            return queryName(getContentResolver(), uri);
+        return new File(Uri.parse(attachedUri).getPath()).getName();
     }
 
     private void setPostAndAdminListener() {
@@ -287,7 +319,8 @@ public class EventAndNotice extends AppCompatActivity {
                 String fileName = String.valueOf(dataSnapshot.child("fileName").getValue());
                 String resourceType = String.valueOf(dataSnapshot.child("resourceType").getValue());
                 String publicId = String.valueOf(dataSnapshot.child("publicId").getValue());
-                Post post = new Post(title, description, pinned, postedByNumber, postedByName, null, time, uri, fileName, resourceType, publicId);
+                String mimeType = String.valueOf(dataSnapshot.child("mimeType").getValue());
+                Post post = new Post(title, description, pinned, postedByNumber, postedByName, null, time, uri, fileName, resourceType, publicId, mimeType);
                 postArrayList.add(post);
                 postKeys.add(dataSnapshot.getKey());
                 postArrayAdapter.notifyDataSetChanged();
@@ -305,7 +338,8 @@ public class EventAndNotice extends AppCompatActivity {
                 String fileName = String.valueOf(dataSnapshot.child("fileName").getValue());
                 String resourceType = String.valueOf(dataSnapshot.child("resourceType").getValue());
                 String publicId = String.valueOf(dataSnapshot.child("publicId").getValue());
-                Post post = new Post(title, description, pinned, postedByNumber, postedByName, null, time, uri, fileName, resourceType, publicId);
+                String mimeType = String.valueOf(dataSnapshot.child("mimeType").getValue());
+                Post post = new Post(title, description, pinned, postedByNumber, postedByName, null, time, uri, fileName, resourceType, publicId, mimeType);
                 String key = dataSnapshot.getKey();
                 int index = postKeys.indexOf(key);
                 postArrayList.set(index, post);
@@ -384,5 +418,69 @@ public class EventAndNotice extends AppCompatActivity {
     public FileSelectedFragment setSendFragment(FileSelectedFragment fragment) {
         sendFragment = fragment;
         return sendFragment;
+    }
+
+    /**
+     * Read the content and file name from the received uri.
+     *
+     * @param intent Intent received from other app.
+     * @return The generated file after consuming the uri.
+     * @throws IOException If we are unable to read content from uri or read the content to cache file.
+     */
+    private File handleIntent(Intent intent) throws IOException {
+        //Get the uri of the content
+        Uri uri = intent.getData();
+        //If received uri is null, return null
+        if (uri == null)
+            return null;
+        //Get the file name
+        String fileName = queryName(getContentResolver(), uri);
+        //If the filename is null, return null
+        if (fileName == null)
+            return null;
+        //Create the file in cache directory
+        File file = new File(getCacheDir(), fileName);
+        //Consume content from uri
+        try (InputStream inputStream = getContentResolver().openInputStream(uri)) {
+            //Write content to created file
+            try (OutputStream output = new FileOutputStream(file)) {
+                byte[] buffer = new byte[4 * 1024];
+                int read;
+                //Consume content from uri and write it to the file
+                while ((read = inputStream != null ? inputStream.read(buffer) : 0) != -1) {
+                    output.write(buffer, 0, read);
+                }
+                //Close the output stream
+                output.flush();
+                output.close();
+            }
+            //Close the input stream
+            inputStream.close();
+        }
+        //Return the file
+        return file;
+    }
+
+    private String queryName(ContentResolver resolver, Uri uri) {
+        Cursor returnCursor =
+                resolver.query(uri, null, null, null, null);
+        if (returnCursor == null)
+            return null;
+        int nameIndex = returnCursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
+        returnCursor.moveToFirst();
+        Log.d("Cursor details", Arrays.toString(returnCursor.getColumnNames()));
+/*        for (int i = 0; i < returnCursor.getColumnCount())
+            Log.d("Cursor val", returnCursor.get)*/
+        String name = returnCursor.getString(nameIndex);
+        returnCursor.close();
+        return name;
+    }
+
+    private Cursor queryDoc(ContentResolver resolver, Uri uri) {
+        Cursor cursor = resolver.query(uri, null, null, null, null);
+        if (cursor == null)
+            return null;
+        cursor.moveToFirst();
+        return cursor;
     }
 }

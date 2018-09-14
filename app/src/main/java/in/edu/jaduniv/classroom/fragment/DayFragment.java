@@ -14,7 +14,7 @@ import java.util.ArrayList;
 
 import in.edu.jaduniv.classroom.R;
 import in.edu.jaduniv.classroom.adapters.RoutineClassAdapter;
-import in.edu.jaduniv.classroom.object.Class;
+import in.edu.jaduniv.classroom.object.__Class;
 
 /**
  * A {@link Fragment} subclass which displays classes in a day.
@@ -22,13 +22,13 @@ import in.edu.jaduniv.classroom.object.Class;
 public class DayFragment extends Fragment {
 
     private final static String ARG_TIMETABLE = "TIME_TABLE";
-    private ArrayList<Class> classes;
+    private ArrayList<__Class> classes;
 
     public DayFragment() {
         // Required empty public constructor
     }
 
-    public static DayFragment getInstance(ArrayList<Class> classes) {
+    public static DayFragment getInstance(ArrayList<__Class> classes) {
         DayFragment dayFragment = new DayFragment();
         Bundle args = new Bundle();
         args.putSerializable(ARG_TIMETABLE, classes);
@@ -40,7 +40,7 @@ public class DayFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        classes = (ArrayList<Class>) ((getArguments() != null) ? getArguments().getSerializable(ARG_TIMETABLE) : null);
+        classes = (ArrayList<__Class>) ((getArguments() != null) ? getArguments().getSerializable(ARG_TIMETABLE) : null);
         return inflater.inflate(R.layout.fragment_day, container, false);
     }
 

@@ -15,11 +15,12 @@ public class Post {
     private String fileName;
     private String resourceType;
     private String publicId;
+    private String mimeType;
 
     public Post() {
     }
 
-    public Post(String title, String description, boolean pinned, String postedByNumber, String postedByName, Map<String, String> time, Long longTime, String url, String fileName, String resourceType, String publicId) {
+    public Post(String title, String description, boolean pinned, String postedByNumber, String postedByName, Map<String, String> time, Long longTime, String url, String fileName, String resourceType, String publicId, String mimeType) {
         this.title = title;
         this.description = description;
         this.pinned = pinned;
@@ -31,6 +32,15 @@ public class Post {
         this.fileName = fileName;
         this.resourceType = resourceType;
         this.publicId = publicId;
+        this.mimeType = mimeType;
+    }
+
+    public String getMimeType() {
+        return mimeType;
+    }
+
+    public void setMimeType(String mimeType) {
+        this.mimeType = mimeType;
     }
 
     public String getDescription() {
@@ -121,6 +131,13 @@ public class Post {
         this.publicId = publicId;
     }
 
+    /**
+     * Returns {@link String} value of the Post{@link Post}.
+     * Used for logging purpose only.
+     * DON"T USE NOW FOR COMPARISION. FOR COMPARISION, NEED TO UPDATE PROPERLY.
+     *
+     * @return String value denoting post.
+     */
     @Override
     public String toString() {
         return "Post[" + hashCode() + "]: "

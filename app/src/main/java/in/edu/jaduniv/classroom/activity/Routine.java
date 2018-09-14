@@ -21,19 +21,19 @@ import java.util.Calendar;
 
 import in.edu.jaduniv.classroom.R;
 import in.edu.jaduniv.classroom.adapters.RoutineDayAdapter;
-import in.edu.jaduniv.classroom.object.Class;
+import in.edu.jaduniv.classroom.object.__Class;
 import in.edu.jaduniv.classroom.utility.FirebaseUtils;
 
 public class Routine extends AppCompatActivity {
 
     //Time table
-    ArrayList<ArrayList<Class>> timeTable = new ArrayList<>();
+    ArrayList<ArrayList<__Class>> timeTable = new ArrayList<>();
     ArrayList<ArrayList<String>> timeTableKeys = new ArrayList<>();
 
     //Adapter for day fragment of ViewPager
     RoutineDayAdapter routineDayAdapter;
 
-    //Class code
+    //__Class code
     private String classCode;
 
     //Firebase
@@ -58,7 +58,7 @@ public class Routine extends AppCompatActivity {
             routineEventListener = new ChildEventListener() {
                 @Override
                 public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                    final Class _class = dataSnapshot.getValue(Class.class);
+                    final __Class _class = dataSnapshot.getValue(__Class.class);
                     if (_class == null)
                         return;
                     int day = _class.getDay();
@@ -69,7 +69,7 @@ public class Routine extends AppCompatActivity {
 
                 @Override
                 public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                    final Class _class = dataSnapshot.getValue(Class.class);
+                    final __Class _class = dataSnapshot.getValue(__Class.class);
                     if (_class == null)
                         return;
                     int i1 = -1, i2 = -1;
@@ -88,7 +88,7 @@ public class Routine extends AppCompatActivity {
 
                 @Override
                 public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-                    final Class _class = dataSnapshot.getValue(Class.class);
+                    final __Class _class = dataSnapshot.getValue(__Class.class);
                     if (_class == null)
                         return;
                     int day = _class.getDay();

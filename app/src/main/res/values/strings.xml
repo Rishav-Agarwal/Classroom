@@ -1,51 +1,54 @@
 <resources>
-    <string name="app_name">Classroom</string>
+	<string name="app_name">Classroom</string>
 
-    <!-- Navigation drawer strings resource -->
-    <string name="nav_other">Other</string>
-    <string name="nav_about_us">About</string>
-    <string name="nav_privacy_policy">Privacy Policy</string>
-    <string name="nav_head_back_img">Navigation drawer header\'s background image</string>
-    <string name="nav_profile_pic">Navigation drawer profile picture</string>
-    <string name="nav_item_title_classes">Classes</string>
-    <string name="open_drawer">Open drawer</string>
-    <string name="close_drawer">Close drawer</string>
+	<!-- Navigation drawer strings resource -->
+	<string name="nav_other">Other</string>
+	<string name="nav_about_us">About</string>
+	<string name="nav_privacy_policy">Privacy Policy</string>
+	<string name="nav_head_back_img">Navigation drawer header\'s background image</string>
+	<string name="nav_profile_pic">Navigation drawer profile picture</string>
+	<string name="nav_item_title_classes">Classes</string>
+	<string name="open_drawer">Open drawer</string>
+	<string name="close_drawer">Close drawer</string>
 
-    <!-- Overflow menu string resources -->
-    <string name="menu_new_class">New class</string>
+	<!-- Overflow menu string resources -->
+	<string name="menu_new_class">New class</string>
 
-    <!-- Login strings -->
-    <string name="app_icon">App icon</string>
-    <string name="name">Name</string>
-    <string name="email">Email</string>
+	<!-- Login strings -->
+	<string name="app_icon">App icon</string>
+	<string name="name">Name</string>
+	<string name="email">Email</string>
 
-    <!-- Default fragment strings -->
-    <string name="welcome_to_classroom">Welcome to Classroom</string>
-    <string name="join_or_create_text">Join or Create a class by clicking the \'+\' button</string>
+	<!-- Default fragment strings -->
+	<string name="welcome_to_classroom">Welcome to Classroom</string>
+	<string name="join_or_create_text">Join or Create a class by clicking the \'+\' button</string>
 
-    <!-- All other/ Common resources -->
-    <string name="next">Next</string>
-    <string name="send">Send</string>
-    <string name="accept_join_request">Accept join request</string>
-    <string name="reject_join_request">Reject join request</string>
-    <string name="post_requests">Post requests</string>
-    <string name="attach_file">Attach file</string>
-    <string name="syllabus">Syllabus</string>
+	<!-- All other/ Common resources -->
+	<string name="next">Next</string>
+	<string name="send">Send</string>
+	<string name="accept_join_request">Accept join request</string>
+	<string name="reject_join_request">Reject join request</string>
+	<string name="post_requests">Post requests</string>
+	<string name="attach_file">Attach file</string>
+	<string name="syllabus">Syllabus</string>
 
-    <string name="remove_file">Remove file</string>
-    <string name="re_download">Download</string>
-    <string name="contains_a_file">Contains a file</string>
-    <string name="overflow_menu">Overflow menu</string>
-    <string name="participant_profile_picture">Participant profile picture</string>
-    <string name="admin">admin</string>
-    <string name="write_a_message">Write a message</string>
-    <string name="accept_post_req">Accept post request</string>
-    <string name="decline_post_req">Decline post request</string>
+	<string name="remove_file">Remove file</string>
+	<string name="re_download">Download</string>
+	<string name="contains_a_file">Contains a file</string>
+	<string name="overflow_menu">Overflow menu</string>
+	<string name="participant_profile_picture">Participant profile picture</string>
+	<string name="admin">admin</string>
+	<string name="write_a_message">Write a message</string>
+	<string name="accept_post_req">Accept post request</string>
+	<string name="decline_post_req">Decline post request</string>
 
-    <string name="nothing_here">Nothing here!</string>
+	<string name="nothing_here">Nothing here!</string>
 
-    <string name="file_upload_service_desc">This service is used to upload files to the server.</string>
-    <string name="class_name">Class name</string>
-    <string name="class_code">Class code</string>
+	<string name="file_upload_service_desc">This service is used to upload files to the server.</string>
+	<string name="class_name">Class name</string>
+	<string name="class_code">Class code</string>
+	<string name="join_class_search">Enter class code to join</string>
+	<string name="join">Join</string>
+	<string name="class_icon">Class icon</string>
 
 </resources>

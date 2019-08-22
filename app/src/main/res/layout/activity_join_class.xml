@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	tools:context=".activity.JoinClassActivity">
+
+	<androidx.appcompat.widget.Toolbar
+		android:id="@+id/toolbar"
+		android:layout_width="match_parent"
+		android:layout_height="?attr/actionBarSize"
+		android:background="@color/colorPrimary"
+		app:layout_constraintTop_toTopOf="parent"
+		app:title="Join class" />
+
+	<LinearLayout
+		android:id="@+id/ll_search"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_margin="8dp"
+		android:background="@drawable/post_send_back"
+		android:orientation="horizontal"
+		app:layout_constraintTop_toBottomOf="@id/toolbar">
+
+		<EditText
+			android:id="@+id/et_class_search"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_weight="1"
+			android:background="@null"
+			android:hint="@string/join_class_search"
+			android:importantForAutofill="no"
+			android:inputType="text"
+			android:padding="8dp" />
+
+		<Button
+			android:id="@+id/btn_search_class_code"
+			android:layout_width="32dp"
+			android:layout_height="32dp"
+			android:layout_gravity="center"
+			android:layout_weight="0"
+			android:background="@drawable/search"
+			android:clickable="true"
+			android:focusable="true"
+			android:foreground="?android:attr/selectableItemBackground" />
+	</LinearLayout>
+
+	<androidx.cardview.widget.CardView
+		android:id="@+id/cv_join_class"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_margin="8dp"
+		android:clickable="true"
+		android:focusable="true"
+		android:foreground="?android:attr/selectableItemBackground"
+		app:cardBackgroundColor="@color/cardBackground"
+		app:cardCornerRadius="4dp"
+		app:cardElevation="2dp"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintTop_toBottomOf="@id/ll_search">
+
+		<androidx.constraintlayout.widget.ConstraintLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:orientation="vertical"
+			android:padding="8dp">
+
+			<ImageView
+				android:id="@+id/iv_class"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_gravity="center"
+				android:contentDescription="@string/class_icon"
+				android:src="@drawable/class_icon"
+				app:layout_constraintStart_toStartOf="parent"
+				app:layout_constraintTop_toTopOf="parent" />
+
+			<TextView
+				android:id="@+id/tv_search_class_name"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_margin="4dp"
+				android:textColor="@android:color/black"
+				android:textSize="20sp"
+				app:layout_constraintStart_toEndOf="@id/iv_class"
+				app:layout_constraintTop_toTopOf="parent"
+				tools:text="JUIT 2016-20" />
+
+			<TextView
+				android:id="@+id/tv_search_class_code"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginStart="12dp"
+				android:textColor="@android:color/darker_gray"
+				android:textSize="12sp"
+				app:layout_constraintStart_toEndOf="@id/iv_class"
+				app:layout_constraintTop_toBottomOf="@id/tv_search_class_name"
+				tools:text="juit1620" />
+
+			<Button
+				android:id="@+id/btn_join_class"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_gravity="center"
+				android:layout_marginTop="8dp"
+				android:background="@drawable/post_send_back"
+				android:foreground="?android:attr/selectableItemBackground"
+				android:text="@string/join"
+				app:layout_constraintEnd_toEndOf="parent"
+				app:layout_constraintTop_toBottomOf="@id/iv_class" />
+		</androidx.constraintlayout.widget.ConstraintLayout>
+
+	</androidx.cardview.widget.CardView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

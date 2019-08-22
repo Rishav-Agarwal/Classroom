@@ -1,7 +1,9 @@
 package in.edu.jaduniv.classroom.utility;
 
-import android.support.annotation.NonNull;
+import android.content.Context;
+import androidx.annotation.NonNull;
 
+import com.google.firebase.FirebaseApp;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -27,6 +29,10 @@ public final class FirebaseUtils {
 
     //Stores current user
     //private static CurrentUser currentUser = null;
+
+    public static void initialize(Context context) {
+        FirebaseApp.initializeApp(context);
+    }
 
     /**
      * - Returns database instance.

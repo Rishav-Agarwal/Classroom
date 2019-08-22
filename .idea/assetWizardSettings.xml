@@ -18,7 +18,7 @@
                                 <PersistentState>
                                   <option name="values">
                                     <map>
-                                      <entry key="url" value="jar:file:/C:/Program%20Files/Android/Android%20Studio/plugins/android/lib/android.jar!/images/material_design_icons/content/ic_add_black_24dp.xml" />
+                                      <entry key="url" value="jar:file:/home/mr-redible/rishav/android-studio/plugins/android/lib/android.jar!/images/material_design_icons/action/ic_search_black_24dp.xml" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -29,8 +29,9 @@
                         <option name="values">
                           <map>
                             <entry key="autoMirrored" value="true" />
-                            <entry key="outputName" value="join_create" />
-                            <entry key="sourceFile" value="C:\Users\risha" />
+                            <entry key="color" value="aaaaaa" />
+                            <entry key="outputName" value="search" />
+                            <entry key="sourceFile" value="$USER_HOME$/C:\Users\risha" />
                           </map>
                         </option>
                       </PersistentState>
